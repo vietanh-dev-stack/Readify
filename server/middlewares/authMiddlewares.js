@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes"
 import env from "../configs/environment.js"
 import ApiError from "../utils/apiError.js"
-import JwtProvider from "../providers/JwtProvider.js"
+import JwtProvider from "../providers/jwtProvider.js"
 
 
 const authMiddleware = {
@@ -16,12 +16,16 @@ const authMiddleware = {
 
         try {
             //verify token
-            const decoded = await JwtProvider.verifyToken(accessToken, env.ACCESS_TOKEN_SECRET_SIGNATURE)
-            
+            const accessTokenDecoded = await JwtProvider.verifyToken(accessToken, env.ACCESS_TOKEN_SECRET_SIGNATURE)
+
             //if token is valid , save token to req to use later
-            req.user = decoded
+            req.jwtDecoded = accessTokenDecoded
             next()
         } catch (error) {
+            if (error?.message?.includes('jwt expired')) {
+                next(new ApiError(StatusCodes.GONE, 'Token is expired!'))
+                return
+            }
             next(new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized'))
         }
     }

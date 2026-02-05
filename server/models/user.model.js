@@ -10,14 +10,20 @@ const userSchema = new mongoose.Schema({
         enum: ['client', 'admin'],
         default: 'client'
     },
-    phone: String,
-    address: [
-        {
-            fullAddress: String,
-            city: String,
-            isDefault: Boolean
-        }
-    ],
+    phone: {
+        type: String,
+        default: null
+    },
+    address: {
+        type: [
+            {
+                fullAddress: String,
+                city: String,
+                isDefault: Boolean
+            }
+        ],
+        default: []
+    },
     isActive: {
         type: Boolean,
         default: true

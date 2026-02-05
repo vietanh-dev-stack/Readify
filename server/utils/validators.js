@@ -7,6 +7,7 @@ export const PASSWORD_RULE_MESSAGE = 'Password must include at least 1 letter, a
 export const PASSWORD_CONFIRMATION_MESSAGE = 'Password Confirmation does not match!'
 export const PHONE_RULE = /^0\d{9}$/
 export const PHONE_RULE_MESSAGE = 'Phone number is invalid. (example: 0912345678)'
+export const SLUG_RULE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 
 // Related to Validate File
