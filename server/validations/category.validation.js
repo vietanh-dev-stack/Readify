@@ -8,7 +8,7 @@ const categoryValidation = {
         const schema = Joi.object({
             name: Joi.string().min(3).max(100).required().messages({
                 'string.empty': 'Category name is required',
-                'string.min': 'Category name cannot be empty',
+                'string.min': 'Category name must be at least 3',
                 'string.max': 'Category name cannot exceed 100 characters'
             }),
             description: Joi.string().max(500).allow('').messages({
@@ -27,11 +27,11 @@ const categoryValidation = {
     update: async (req, res, next) => {
         const schema = Joi.object({
             name: Joi.string().min(3).max(100).messages({
-                'string.min': 'Category name cannot be empty',
+                'string.min': 'Category name must be at least 3',
                 'string.max': 'Category name cannot exceed 100 characters'
             }),
             description: Joi.string().max(500).allow('').messages({
-                'string.max': 'Category description cannot exceed 100 characters'
+                'string.max': 'Category description cannot exceed 500 characters'
             })
         })
 

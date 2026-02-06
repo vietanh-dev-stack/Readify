@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
 
 const seriesSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    },
     title: String,
     description: String,
     totalVolumes: Number,
@@ -8,6 +12,10 @@ const seriesSchema = new mongoose.Schema({
         type: String,
         enum: ['ongoing', 'completed'],
         default: 'ongoing'
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

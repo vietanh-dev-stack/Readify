@@ -1,7 +1,7 @@
 import express from 'express'
-import authMiddleware from '../middlewares/authMiddlewares.js'
-import categoryValidation from '../validations/category.validation.js'
-import categoryController from '../controllers/category.controller.js'
+import authMiddleware from '../../middlewares/authMiddlewares.js'
+import categoryValidation from '../../validations/category.validation.js'
+import categoryController from '../../controllers/category.controller.js'
 
 
 const router = express.Router()
