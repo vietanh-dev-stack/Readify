@@ -14,7 +14,7 @@ const authValidation = {
             await schema.validateAsync(req.body, { abortEarly: false })
             next()
         } catch (error) {
-            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message))
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.details))
         }
     },
     
@@ -29,7 +29,7 @@ const authValidation = {
             await schema.validateAsync(req.body, { allowUnknown: true })
             next()
         } catch (error) {
-            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message))
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.details))
         }
     }
 }

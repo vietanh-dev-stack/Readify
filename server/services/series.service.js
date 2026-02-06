@@ -50,7 +50,11 @@ const seriesService = {
                 throw new ApiError(StatusCodes.BAD_REQUEST, 'Series status is invalid')
             }
 
-            if (data.title !== undefined) {
+            if (data.title && data.title !== series.title) {
+                const existed = await Series.findOne({title: data.title, isDelete: false, _id: {$ne: seId}})
+                if(existed){
+                    throw new ApiError(StatusCodes.CONFLICT, 'Series already exists')
+                }
                 series.title = data.title
             }
             if (data.description !== undefined) {

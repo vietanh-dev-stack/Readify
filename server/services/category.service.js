@@ -50,7 +50,7 @@ const categoryService = {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found')
             }
             if (cate.userId.toString() !== userId.toString()) {
-                throw new ApiError(StatusCodes.FORBIDDEN, 'You do not have permission to edit this category')
+                throw new ApiError(StatusCodes.FORBIDDEN, 'You do not have permission to update this category')
             }
 
             if (data.name) {

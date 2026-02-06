@@ -20,7 +20,7 @@ const categoryValidation = {
             await schema.validateAsync(req.body, { abortEarly: false })
             next()
         } catch (error) {
-            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message))
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.details))
         }
     },
 
@@ -39,7 +39,7 @@ const categoryValidation = {
             await schema.validateAsync(req.body, { abortEarly: false })
             next()
         } catch (error) {
-            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message))
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.details))
         }
     }
 
