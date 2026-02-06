@@ -8,7 +8,11 @@ const categorySchema = new mongoose.Schema({
     },
     name: String,
     slug: String,
-    description: String
+    description: String,
+    isDelete: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true })
 
 categorySchema.index({ slug: 1 })
