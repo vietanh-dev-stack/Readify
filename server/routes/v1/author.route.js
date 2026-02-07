@@ -6,9 +6,9 @@ import uploadMiddleware from '../../middlewares/uploadMiddleware.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, uploadMiddleware.single('image'), authorValidation.create, authorController.createAuthor)
+router.post('/create', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), authorValidation.create, authorController.createAuthor)
 router.get('/', authorController.getAuthor)
-router.put('/update/:aId', authMiddleware.isAuthorized, uploadMiddleware.single('image'), authorController.updateAuthor)
+router.put('/update/:aId', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), authorController.updateAuthor)
 router.delete('/delete/:aId', authMiddleware.isAuthorized, authorController.deleteAuthor)
 
 

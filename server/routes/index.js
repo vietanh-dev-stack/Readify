@@ -4,6 +4,7 @@ import cateRoutes from './v1/category.route.js'
 import seriesRoutes from './v1/series.route.js'
 import authorRoutes from './v1/author.route.js'
 import publisherRoutes from './v1/publisher.route.js'
+import bookRoutes from './v1/book.route.js'
 
 const Router = express.Router()
 
@@ -16,5 +17,6 @@ Router.use('/cate', cateRoutes)
 Router.use('/series', seriesRoutes)
 Router.use('/author', authorRoutes)
 Router.use('/publisher', publisherRoutes)
+Router.use('/book', bookRoutes)
 
 export default Router

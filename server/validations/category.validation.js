@@ -33,7 +33,7 @@ const categoryValidation = {
             description: Joi.string().max(500).allow('').messages({
                 'string.max': 'Category description cannot exceed 500 characters'
             })
-        })
+        }).min(1)
 
         try {
             await schema.validateAsync(req.body, { abortEarly: false })

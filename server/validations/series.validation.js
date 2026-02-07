@@ -43,7 +43,7 @@ const seriesValidation = {
                 'number.interger': 'Volumes must be an integer',
                 'number.min': 'Volumes must be at least 1'
             })
-        })
+        }).min(1)
         
         try {
             await schema.validateAsync(req.body, { abortEarly: false })

@@ -2,9 +2,16 @@ import mongoose from 'mongoose'
 
 
 const bookSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    },
     title: String,
     slug: String,
-    description: String,
+    description: {
+        type: String,
+        default: ''
+    },
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'categories'
@@ -24,15 +31,36 @@ const bookSchema = new mongoose.Schema({
         ref: 'publishers'
     },
     price: Number,
-    discountPrice: Number,
+    discountPrice: {
+        type: Number,
+        default: 0
+    },
     coverImage: String,
-    images: [String],
+    images: {
+        type: [String],
+        default: []
+    },
     pages: Number,
-    language: String,
-    stock: Number,
-    sold: Number,
-    ratingAvg: Number,
-    ratingCount: Number,
+    bookLanguage: {
+        type: String,
+        default: ''
+    },
+    stock: {
+        type: Number,
+        default: 0
+    },
+    sold: {
+        type: Number,
+        default: 0
+    },
+    ratingAvg: {
+        type: Number,
+        default: 0
+    },
+    ratingCount: {
+        type: Number,
+        default: 0
+    },
     releaseDate: Date,
     status: {
         type: String,
