@@ -2,6 +2,10 @@ import mongoose from 'mongoose'
 
 
 const inventorySchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    },
     bookId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'books'

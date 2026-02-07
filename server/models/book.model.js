@@ -45,10 +45,6 @@ const bookSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    stock: {
-        type: Number,
-        default: 0
-    },
     sold: {
         type: Number,
         default: 0

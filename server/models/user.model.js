@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
         ],
         default: []
     },
+    avatar: {
+        type: String,
+        default: ""
+    },
     isActive: {
         type: Boolean,
         default: true

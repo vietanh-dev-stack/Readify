@@ -82,7 +82,6 @@ const bookService = {
                 images,
                 pages: data.pages,
                 bookLanguage: data.bookLanguage,
-                stock: data.stock,
                 releaseDate: data.releaseDate
             })
             await newBook.save()
