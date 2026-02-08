@@ -6,6 +6,7 @@ import authorRoutes from './v1/author.route.js'
 import publisherRoutes from './v1/publisher.route.js'
 import bookRoutes from './v1/book.route.js'
 import invenRoutes from './v1/inventory.route.js'
+import wishlistRoutes from './v1/wishlist.route.js'
 
 const Router = express.Router()
 
@@ -20,5 +21,6 @@ Router.use('/author', authorRoutes)
 Router.use('/publisher', publisherRoutes)
 Router.use('/book', bookRoutes)
 Router.use('/inven', invenRoutes)
+Router.use('/wishlist', wishlistRoutes)
 
 export default Router

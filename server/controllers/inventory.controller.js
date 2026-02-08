@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes"
-import inventoryService from '../services/inventory.service'
+import inventoryService from '../services/inventory.service.js'
 
 
 const inventoryController = {

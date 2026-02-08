@@ -12,6 +12,7 @@ const wishlistSchema = new mongoose.Schema({
             ref: 'books'
         }
     ]
+
 }, { timestamps: true })
 
 wishlistSchema.index({ userId: 1 }, { unique: true })
