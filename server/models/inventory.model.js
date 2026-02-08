@@ -14,8 +14,7 @@ const inventorySchema = new mongoose.Schema({
     reserved: {
         type: Number,
         default: 0
-    },
-    updatedAt: Date
-})
+    }
+}, {timestamps: true})
 
 export default mongoose.model('inventories', inventorySchema)

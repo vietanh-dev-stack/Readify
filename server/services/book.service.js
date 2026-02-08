@@ -7,6 +7,7 @@ import Category from '../models/category.model.js'
 import Series from '../models/series.model.js'
 import Author from '../models/author.model.js'
 import Publisher from '../models/publisher.model.js'
+import Inventory from '../models/inventory.model.js'
 
 const bookService = {
 
@@ -234,6 +235,19 @@ const bookService = {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Book not found')
             }
             return book
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getQuantityByBook: async (bId) => {
+        try {
+            const inventory = await Inventory.findOne({ bookId: bId })
+            if (!inventory) {
+                throw new ApiError(StatusCodes.NOT_FOUND, 'Inventory not found for this book')
+            }
+            const available = Math.max(0, inventory.quantity - inventory.reserved)
+            return available
         } catch (error) {
             throw error
         }

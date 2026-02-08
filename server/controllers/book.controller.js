@@ -53,6 +53,19 @@ const bookController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getQuantityByBook: async (req, res, next) => {
+        try {
+            const bId = req.params.bId
+            const result = await bookService.getQuantityByBook(bId)
+            return res.status(StatusCodes.OK).json({
+                bookId: bId,
+                available: result
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 }
 
