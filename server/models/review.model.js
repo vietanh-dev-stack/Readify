@@ -16,8 +16,7 @@ const reviewSchema = new mongoose.Schema({
         max: 5,
     },
     comment: String,
-    createdAt: Date
-})
+}, {timestamps: true})
 
 reviewSchema.index({ bookId: 1 })
 

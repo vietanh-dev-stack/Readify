@@ -24,6 +24,11 @@ const env = {
 
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+
+  VNP_TMNCODE: process.env.VNP_TMNCODE,
+  VNP_HASH_SECRET: process.env.VNP_HASH_SECRET,
+  VNP_URL: process.env.VNP_URL,
+  VNP_RETURN_URL: process.env.VNP_RETURN_URL,
 }
 
 export default env

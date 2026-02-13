@@ -14,16 +14,18 @@ const orderSchema = new mongoose.Schema({
         enum: ["pending", "paid", "shipping", "completed", "cancelled"],
         default: 'pending'
     },
+    shippingAddress: {
+        fullAddress: String,
+        city: String,
+        phone: String,
+        name: String
+    },
     paymentMethod: {
         type: String,
         enum: ['cod', 'momo', 'vnpay'],
         default: 'cod'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-})
+}, { timestamps: true })
 
 orderSchema.index({ userId: 1, status: 1 })
 

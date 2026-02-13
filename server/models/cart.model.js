@@ -16,6 +16,6 @@ const cartSchema = new mongoose.Schema({
             priceAtTime: Number
         }
     ]
-}, { timestapms: true })
+}, { timestamps: true })
 
 export default mongoose.model('carts', cartSchema)
