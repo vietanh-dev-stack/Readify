@@ -13,7 +13,8 @@ const cartSchema = new mongoose.Schema({
                 ref: 'books'
             },
             quantity: Number,
-            priceAtTime: Number
+            priceAtTime: Number,
+            _id: false
         }
     ]
 }, { timestamps: true })

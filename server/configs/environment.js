@@ -29,6 +29,15 @@ const env = {
   VNP_HASH_SECRET: process.env.VNP_HASH_SECRET,
   VNP_URL: process.env.VNP_URL,
   VNP_RETURN_URL: process.env.VNP_RETURN_URL,
+
+  MOMO_PARTNER_CODE: process.env.MOMO_PARTNER_CODE,
+  MOMO_ACCESS_KEY: process.env.MOMO_ACCESS_KEY,
+  MOMO_SECRET_KEY: process.env.MOMO_SECRET_KEY,
+  MOMO_ENDPOINT: process.env.MOMO_ENDPOINT,
+  MOMO_NOTIFY_URL: process.env.MOMO_NOTIFY_URL,
+  MOMO_REDIRECT_URL: process.env.MOMO_REDIRECT_URL,
+
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY
 }
 
 export default env
