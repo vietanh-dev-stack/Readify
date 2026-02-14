@@ -14,16 +14,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    address: {
-        type: [
-            {
-                fullAddress: String,
-                city: String,
-                isDefault: Boolean
-            }
-        ],
-        default: []
-    },
     avatar: {
         type: String,
         default: ""

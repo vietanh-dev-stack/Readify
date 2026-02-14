@@ -46,6 +46,16 @@ const authorController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getAuthorById: async (req, res, next) => {
+        try {
+            const aId = req.params.aId
+            const result = await authorSerive.getAuthorById(aId)
+            return res.status(StatusCodes.OK).json(result)
+        } catch (error) {
+            next(error)
+        }
     }
 }
 

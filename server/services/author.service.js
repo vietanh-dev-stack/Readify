@@ -100,6 +100,18 @@ const authorSerive = {
         } catch (error) {
             throw error
         }
+    },
+
+    getAuthorById: async (aId) => {
+        try {
+            const author = await Author.findById(aId)
+            if(!author || author.isDelete) {
+                throw new ApiError(StatusCodes.NOT_FOUND)
+            }
+            return author
+        } catch (error) {
+            throw error
+        }
     }
 }
 
