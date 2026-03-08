@@ -1,15 +1,14 @@
 import { ThemeProvider, CssBaseline } from '@mui/material';
+import { Toaster } from 'react-hot-toast';
 import AppRoutes from './routes';
-import { AuthProvider } from './hooks/AuthProvider';
 import theme from './theme';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <Toaster position="top-right" reverseOrder={false} />
       <CssBaseline />
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <AppRoutes />
     </ThemeProvider>
   );
 }

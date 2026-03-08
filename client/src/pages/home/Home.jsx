@@ -3,6 +3,7 @@ import { Box, Grid, Typography, Button, Container } from '@mui/material';
 import BookCard from '../../components/common/BookCard';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { fetchBooks } from '../../services/book.service';
 
 // sample data
 const mockBooks = [
@@ -15,12 +16,18 @@ const mockBooks = [
 ];
 
 const Home = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [books, setBooks] = useState(mockBooks);
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    // TODO: fetch from service
-    // already populated with mock data
+    const fetchData = async () => {
+      try {
+        const response = await fetchBooks()
+        setBooks(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
   }, []);
 
   return (

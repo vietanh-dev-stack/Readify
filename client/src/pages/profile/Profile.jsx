@@ -40,8 +40,19 @@ const Profile = () => {
         <Box>
           <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, overflow: 'hidden' }}>
             <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', bgcolor: 'grey.50' }}>
-              <Avatar sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem', fontWeight: 700 }}>
-                {user.name ? user.name[0].toUpperCase() : 'U'}
+              <Avatar
+                src={user.avatar}
+                alt={user.name}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  mb: 2,
+                  bgcolor: 'primary.main',
+                  fontSize: '2rem',
+                  fontWeight: 700
+                }}
+              >
+                {!user.avatar && (user.name ? user.name[0].toUpperCase() : 'U')}
               </Avatar>
               <Typography variant="h6" fontWeight={700}>{user.name}</Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>{user.email}</Typography>
@@ -49,28 +60,28 @@ const Profile = () => {
                 Premium Member
               </Typography>
             </Box>
-            
+
             <Divider />
 
-            <Tabs 
-              orientation="vertical" 
-              variant="scrollable" 
-              value={tabValue} 
-              onChange={handleTabChange} 
+            <Tabs
+              orientation="vertical"
+              variant="scrollable"
+              value={tabValue}
+              onChange={handleTabChange}
               sx={{ borderRight: 1, borderColor: 'divider', '& .MuiTab-root': { alignItems: 'flex-start', px: 3, py: 2, textTransform: 'none', fontWeight: 600, fontSize: '0.95rem' } }}
             >
               <Tab icon={<PersonIcon sx={{ mr: 2 }} />} iconPosition="start" label="Account Overview" />
               <Tab icon={<ShoppingBagIcon sx={{ mr: 2 }} />} iconPosition="start" label="Order History" />
               <Tab icon={<SettingsIcon sx={{ mr: 2 }} />} iconPosition="start" label="Settings" />
             </Tabs>
-            
+
             <Divider />
-            
+
             <Box sx={{ p: 2 }}>
-              <Button 
-                fullWidth 
-                color="error" 
-                startIcon={<LogoutIcon />} 
+              <Button
+                fullWidth
+                color="error"
+                startIcon={<LogoutIcon />}
                 onClick={logout}
                 sx={{ py: 1.5, justifyContent: 'flex-start', px: 2, fontWeight: 600 }}
               >
@@ -83,7 +94,7 @@ const Profile = () => {
         {/* Right Content Area */}
         <Box>
           <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: { xs: 3, md: 5 }, minHeight: '500px' }}>
-            
+
             {/* Tab 0: Account Overview */}
             {tabValue === 0 && (
               <Box>

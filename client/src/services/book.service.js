@@ -1,12 +1,9 @@
-/* eslint-disable */
-// placeholder service; later integrate API calls
+import axiosCustomize from '../api/axiosCustomize'
 
 export const fetchBooks = async () => {
-  // TODO: call backend endpoint
-  return [];
+  return await axiosCustomize.get('/book')
 };
 
 export const fetchBookById = async (id) => {
-  // TODO: call backend endpoint
-  return null;
+  return await axiosCustomize.get(`/book/${id}`)
 };

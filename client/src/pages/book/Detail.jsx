@@ -7,6 +7,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import { fetchBookById } from '../../services/book.service';
 
 const mockBook = {
   id: 1,
@@ -27,12 +28,23 @@ const mockBook = {
 
 const Detail = () => {
   const { id } = useParams();
-  // eslint-disable-next-line no-unused-vars
-  const [book, setBook] = useState(mockBook);
+  const [book, setBook] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    // TODO: fetch book by id
+    const fetchData = async () => {
+      try {
+        const response = await fetchBookById(id)
+        setBook(response.data)
+        if (response.data) {
+          setSelectedImage(response.data.coverImage || response.data.cover)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
   }, [id]);
 
   const handleIncrement = () => {
@@ -51,8 +63,8 @@ const Detail = () => {
 
   return (
     <Box>
-      <Breadcrumbs 
-        separator={<NavigateNextIcon fontSize="small" />} 
+      <Breadcrumbs
+        separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
         sx={{ mb: 4 }}
       >
@@ -65,65 +77,96 @@ const Detail = () => {
         <Typography color="text.primary">{book.title}</Typography>
       </Breadcrumbs>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' }, gap: 6, alignItems: 'start' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr', lg: '3fr 7fr' }, gap: 6, alignItems: 'start' }}>
         {/* Left Column: Image */}
-        <Box>
-          <Box 
-            sx={{ 
-              position: 'relative', 
-              borderRadius: 4, 
+        <Box sx={{ maxWidth: { xs: '100%', sm: 400, md: '100%' }, mx: 'auto', width: '100%' }}>
+          <Box
+            sx={{
+              position: 'relative',
+              borderRadius: 4,
               overflow: 'hidden',
               boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-              bgcolor: 'grey.100'
+              bgcolor: 'grey.100',
+              mb: 2,
+              aspectRatio: '3/4'
             }}
           >
-            <Box 
-              component="img" 
-              src={book.cover} 
-              alt={book.title} 
-              sx={{ width: '100%', display: 'block' }} 
+            <Box
+              component="img"
+              src={selectedImage || book.coverImage || book.cover}
+              alt={book.title}
+              sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
             {book.stock > 0 && (
-              <Chip 
-                label="In Stock" 
-                color="success" 
+              <Chip
+                label="In Stock"
+                color="success"
                 size="small"
-                sx={{ position: 'absolute', top: 16, left: 16, fontWeight: 'bold' }} 
+                sx={{ position: 'absolute', top: 16, left: 16, fontWeight: 'bold' }}
               />
             )}
           </Box>
+
+          {/* Thumbnails */}
+          {((book.images && book.images.length > 0) || book.coverImage) && (
+            <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { height: 6 }, '&::-webkit-scrollbar-thumb': { bgcolor: 'grey.300', borderRadius: 10 } }}>
+              {[book.coverImage || book.cover, ...(book.images || [])].filter(Boolean).map((img, index) => (
+                <Box
+                  key={index}
+                  onClick={() => setSelectedImage(img)}
+                  sx={{
+                    width: 80,
+                    height: 106,
+                    flexShrink: 0,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    border: '2px solid',
+                    borderColor: selectedImage === img ? 'primary.main' : 'transparent',
+                    opacity: selectedImage === img ? 1 : 0.7,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      opacity: 1
+                    }
+                  }}
+                >
+                  <Box component="img" src={img} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </Box>
+              ))}
+            </Box>
+          )}
         </Box>
 
         {/* Right Column: Details */}
         <Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            
+
             <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 1 }}>
-              {book.category}
+              {book.categoryId?.name || book.category}
             </Typography>
-            
+
             <Typography variant="h3" component="h1" sx={{ fontWeight: 800, mt: 1, mb: 1, lineHeight: 1.1 }}>
               {book.title}
             </Typography>
-            
+
             <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-              by <Link href="#" underline="hover" color="inherit">{book.author}</Link>
+              by <Link href="#" underline="hover" color="inherit">{book.authorIds?.map(a => a.name).join(', ') || book.author}</Link>
             </Typography>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <Rating value={book.rating} precision={0.5} readOnly />
+              <Rating value={book.ratingAvg || book.rating || 0} precision={0.5} readOnly />
               <Typography variant="body2" sx={{ ml: 1, mr: 2, color: 'text.secondary' }}>
-                {book.rating} ({book.reviews} reviews)
+                {book.ratingAvg || book.rating || 0} ({book.ratingCount || book.reviews || 0} reviews)
               </Typography>
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 3, gap: 2 }}>
               <Typography variant="h4" color="primary" sx={{ fontWeight: 800 }}>
-                ${book.price}
+                ${book.discountPrice > 0 ? book.discountPrice : book.price}
               </Typography>
-              {book.oldPrice && (
+              {(book.oldPrice || (book.discountPrice > 0 && book.price > book.discountPrice)) && (
                 <Typography variant="h6" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
-                  ${book.oldPrice}
+                  ${book.oldPrice || book.price}
                 </Typography>
               )}
             </Box>
@@ -136,8 +179,8 @@ const Detail = () => {
 
             {/* Action Area */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4, flexWrap: 'wrap' }}>
-              <Paper 
-                elevation={0} 
+              <Paper
+                elevation={0}
                 sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}
               >
                 <IconButton onClick={handleDecrement} disabled={quantity <= 1}>
@@ -150,10 +193,10 @@ const Detail = () => {
                   <AddIcon />
                 </IconButton>
               </Paper>
-              
-              <Button 
-                variant="contained" 
-                size="large" 
+
+              <Button
+                variant="contained"
+                size="large"
                 startIcon={<ShoppingCartIcon />}
                 onClick={addToCart}
                 sx={{ flexGrow: 1, py: 1.5, borderRadius: 2, fontWeight: 700 }}
@@ -186,14 +229,19 @@ const Detail = () => {
 
             <Box sx={{ mt: 4, pt: 4, borderTop: '1px solid', borderColor: 'divider' }}>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
-                <strong>ISBN:</strong> {book.isbn}
+                <strong>Publisher:</strong> {book.publisherId?.name || book.publisher}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
+                <strong>Language:</strong> {book.bookLanguage}
               </Typography>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
                 <strong>Pages:</strong> {book.pages}
               </Typography>
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                <strong>Publisher:</strong> {book.publisher}
-              </Typography>
+              {book.releaseDate && (
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  <strong>Release Date:</strong> {new Date(book.releaseDate).toLocaleDateString()}
+                </Typography>
+              )}
             </Box>
 
           </Box>

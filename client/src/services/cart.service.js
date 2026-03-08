@@ -1,8 +1,6 @@
-/* eslint-disable */
-// placeholder cart service
+import axiosCustomize from '../api/axiosCustomize'
 
 export const addToCart = async (bookId, quantity) => {
-  // TODO: persist to store or call backend
   return { success: true };
 };
 

@@ -15,20 +15,16 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* application layout with authentication */}
+      {/* application layout */}
       <Route
         path="/"
-        element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }
+        element={<MainLayout />}
       >
         <Route index element={<Home />} />
         <Route path="home" element={<Home />} />
-        <Route path="product/:id" element={<Detail />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="cart" element={<Cart />} />
+        <Route path="book/:id" element={<Detail />} />
+        <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
       </Route>
 
       {/* fallback */}

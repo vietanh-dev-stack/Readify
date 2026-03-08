@@ -29,7 +29,7 @@ const BookCard = ({ book }) => {
       <Box sx={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', bgcolor: 'grey.100' }}>
         <CardMedia 
           component="img" 
-          image={book.cover || 'https://via.placeholder.com/300x450?text=No+Cover'} 
+          image={book.coverImage || 'https://via.placeholder.com/300x450?text=No+Cover'} 
           alt={book.title}
           sx={{
             width: '100%',
@@ -57,7 +57,7 @@ const BookCard = ({ book }) => {
       </Box>
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 3 }}>
         <Typography variant="overline" color="primary.main" sx={{ fontWeight: 800, letterSpacing: 1.2, lineHeight: 1 }}>
-          {book.category || 'Fiction'}
+          {book.categoryId.name || 'Unknown'}
         </Typography>
         <Typography 
           gutterBottom 
@@ -79,7 +79,7 @@ const BookCard = ({ book }) => {
           {book.title}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontWeight: 500 }}>
-          By {book.author}
+          By {book.authorIds?.map(author => author.name).join(', ')}
         </Typography>
         
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, mt: 'auto' }}>
@@ -93,7 +93,7 @@ const BookCard = ({ book }) => {
           variant="contained" 
           fullWidth 
           component={Link} 
-          to={`/product/${book.id}`}
+          to={`/book/${book._id}`}
           disableElevation
           sx={{ py: 1, fontWeight: 700, borderRadius: 2 }}
         >

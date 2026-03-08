@@ -1,153 +1,201 @@
 import { useState } from 'react';
-import { Box, Button, TextField, Typography, Container, Paper, InputAdornment, IconButton, Grid } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import authService from '../../services/auth.service';
+import toast from 'react-hot-toast';
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!name || !email || !password) {
-      setError('All fields are required');
+      toast.error('All fields are required');
       return;
     }
-    if (password !== confirm) {
-      setError('Passwords do not match');
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
-    // dummy register/login
-    login({ name, email });
-    navigate('/');
+
+    setLoading(true);
+    try {
+      await authService.register(name, email, password, confirmPassword);
+      toast.success('Registration successful! Please login.');
+      navigate('/login');
+    } catch (err) {
+      const message = err.response?.data?.message || 'Registration failed.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => event.preventDefault();
+  const handleClickShowPassword = () => setShowPassword((s) => !s);
+  const handleMouseDownPassword = (e) => e.preventDefault();
 
   return (
-    <Container component="main" maxWidth="sm" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-      <Paper 
-        elevation={0} 
-        sx={{ 
-          p: { xs: 4, md: 6 }, 
-          width: '100%',
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          borderRadius: 4,
-          boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)',
-          border: '1px solid',
-          borderColor: 'divider'
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+        height: '100vh',
+        width: '100vw'
+      }}
+    >
+      {/* Left Image */}
+      <Box
+        sx={{
+          display: { xs: 'none', md: 'block' },
+          backgroundImage: `
+            url(/assets/login.jpg)
+          `,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      />
+
+      {/* Right Form */}
+      <Box
+        component={Paper}
+        elevation={0}
+        square
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          px: { xs: 4, sm: 8 }
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'primary.main' }}>
-          <AutoStoriesIcon sx={{ fontSize: 40, mr: 1 }} />
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 900, letterSpacing: '-0.05rem' }}>
-            Readify
-          </Typography>
-        </Box>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>
-          Create an account and start your reading adventure today!
-        </Typography>
-
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-          {error && (
-            <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: 'error.light', color: 'error.contrastText', borderRadius: 2 }}>
-              <Typography variant="body2" fontWeight={600}>
-                {error}
-              </Typography>
-            </Paper>
-          )}
-
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 1 }}>
-            <Box sx={{ gridColumn: { xs: '1 / -1' } }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Full Name</Typography>
-              <TextField 
-                fullWidth 
-                placeholder="e.g. Jane Doe"
-                variant="outlined" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </Box>
-            <Box sx={{ gridColumn: { xs: '1 / -1' } }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Email Address</Typography>
-              <TextField 
-                fullWidth 
-                placeholder="jane@example.com"
-                variant="outlined" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Box>
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Password</Typography>
-              <TextField 
-                fullWidth 
-                placeholder="••••••••"
-                type={showPassword ? 'text' : 'password'}
-                variant="outlined" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Confirm Password</Typography>
-              <TextField 
-                fullWidth 
-                placeholder="••••••••"
-                type={showPassword ? 'text' : 'password'}
-                variant="outlined" 
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-              />
-            </Box>
-          </Box>
-          
-          <Button 
-            type="submit"
-            fullWidth 
-            variant="contained" 
-            size="large" 
-            sx={{ mt: 3, mb: 3, py: 1.5, borderRadius: 2, fontWeight: 700 }}
-          >
-            Create Account
-          </Button>
-
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              Already have an account?{' '}
-              <RouterLink to="/login" style={{ color: '#4F46E5', fontWeight: 700, textDecoration: 'none' }}>
-                Log in
-              </RouterLink>
+        <Box sx={{ width: '100%', maxWidth: 420 }}>
+          {/* Logo */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'primary.main' }}>
+            <AutoStoriesIcon sx={{ fontSize: 40, mr: 1 }} />
+            <Typography variant="h4" sx={{ fontWeight: 900 }}>
+              Readify
             </Typography>
           </Box>
+
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+            Create an account and start your reading adventure today!
+          </Typography>
+
+          {/* Form */}
+          <Box component="form" onSubmit={handleSubmit}>
+
+            {/* Name */}
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+              Full Name
+            </Typography>
+            <TextField
+              fullWidth
+              placeholder="Jane Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+
+            {/* Email */}
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+              Email
+            </Typography>
+            <TextField
+              fullWidth
+              placeholder="jane@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+
+            {/* Password */}
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+              Password
+            </Typography>
+            <TextField
+              fullWidth
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 2 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+
+            {/* Confirm */}
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+              Confirm Password
+            </Typography>
+            <TextField
+              fullWidth
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={loading}
+              sx={{ mt: 3, py: 1.5, borderRadius: 2, fontWeight: 700 }}
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Typography variant="body2">
+                Already have an account?{' '}
+                <RouterLink
+                  to="/login"
+                  style={{
+                    color: '#4F46E5',
+                    fontWeight: 700,
+                    textDecoration: 'none'
+                  }}
+                >
+                  Log in
+                </RouterLink>
+              </Typography>
+            </Box>
+          </Box>
         </Box>
-      </Paper>
-    </Container>
+      </Box>
+    </Box>
   );
 };
 
