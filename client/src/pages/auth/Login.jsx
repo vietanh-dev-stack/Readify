@@ -8,6 +8,8 @@ import { useAuth } from '../../hooks/useAuth';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import authService from '../../services/auth.service';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google'
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ const Login = () => {
     try {
       const response = await authService.login(email, password);
       const { userInfo, accessToken } = response.data;
-      
+
       login(userInfo, accessToken);
       toast.success('Login successful!');
       navigate('/');
@@ -42,6 +44,31 @@ const Login = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+
+      const token = credentialResponse.credential
+
+      const response = await authService.googleLogin(token)
+
+      const { userInfo, accessToken } = response.data
+
+      login(userInfo, accessToken)
+
+      toast.success("Login with Google successful!")
+
+      navigate('/')
+
+    } catch (err) {
+
+      const message =
+        err.response?.data?.message || "Google login failed"
+
+      toast.error(message)
+
+    }
+  }
 
   return (
     <Box
@@ -145,15 +172,17 @@ const Login = () => {
               <Typography variant="body2" color="text.secondary">Or continue with</Typography>
             </Divider>
 
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              startIcon={<GoogleIcon />}
-              sx={{ py: 1.5, borderRadius: 2, fontWeight: 600, color: 'text.primary', borderColor: 'divider', '&:hover': { bgcolor: 'grey.50' } }}
-            >
-              Google
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <GoogleLogin
+                theme="outline"
+                size="large"
+                shape="rectangular"
+                text="continue_with"
+                width="100%"
+                onSuccess={handleGoogleLogin}
+                onError={() => toast.error("Google Login Failed")}
+              />
+            </Box>
 
             <Box sx={{ mt: 4, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">

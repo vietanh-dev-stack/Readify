@@ -41,8 +41,8 @@ const Profile = () => {
           <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, overflow: 'hidden' }}>
             <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', bgcolor: 'grey.50' }}>
               <Avatar
-                src={user.avatar}
-                alt={user.name}
+                src={user?.avatar || ""}
+                alt={user?.name}
                 sx={{
                   width: 100,
                   height: 100,
@@ -52,7 +52,7 @@ const Profile = () => {
                   fontWeight: 700
                 }}
               >
-                {!user.avatar && (user.name ? user.name[0].toUpperCase() : 'U')}
+                {!user?.avatar && (user?.name ? user.name[0].toUpperCase() : 'U')}
               </Avatar>
               <Typography variant="h6" fontWeight={700}>{user.name}</Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>{user.email}</Typography>

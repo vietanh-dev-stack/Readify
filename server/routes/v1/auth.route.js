@@ -5,6 +5,7 @@ import authValidation from '../../validations/auth.validation.js'
 const router = express.Router()
 
 router.post('/login', authValidation.login, authController.login)
+router.post('/google', authController.googleLogin)
 router.post('/register', authValidation.register, authController.register)
 
 export default router

@@ -11,7 +11,8 @@ const useAuthStore = create(
         // map username to name for compatibility
         const user = { 
           ...userData, 
-          name: userData.username || userData.name 
+          name: userData.username || userData.name ,
+          avatar: userData.avatar
         };
         set({ 
           user, 

@@ -65,6 +65,7 @@ const bookSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-bookSchema.index({ title: 'text', description: 'text' }, { slug: 1 }, { unique: true })
+bookSchema.index({ title: 'text', description: 'text' })
+bookSchema.index({ slug: 1 }, { unique: true })
 
 export default mongoose.model('books', bookSchema)
