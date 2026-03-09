@@ -5,6 +5,7 @@ import Home from '../pages/home/Home';
 import Detail from '../pages/book/Detail';
 import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
+import Wishlist from '../pages/client/Wishlist';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -25,6 +26,7 @@ const AppRoutes = () => {
         <Route path="book/:id" element={<Detail />} />
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        <Route path="wishlist" element={<Wishlist />} />
       </Route>
 
       {/* fallback */}

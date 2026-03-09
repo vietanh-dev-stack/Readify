@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -20,11 +20,20 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import useWishlistStore from '../../store/useWishlistStore';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const cartCount = 0;
+  const { wishlist, fetchWishlist } = useWishlistStore();
+  const wishlistCount = wishlist.length;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchWishlist();
+    }
+  }, [isAuthenticated, fetchWishlist]);
 
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -192,8 +201,11 @@ const Navbar = () => {
           >
 
             <ActionButton
+              component={Link}
+              to="/wishlist"
               icon={<FavoriteBorderOutlinedIcon />}
               label="Wish List"
+              badgeContent={wishlistCount}
             />
 
             <ActionButton

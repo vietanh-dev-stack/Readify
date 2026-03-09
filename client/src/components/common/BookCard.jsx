@@ -1,8 +1,44 @@
 import React from 'react';
-import { Card, CardMedia, CardContent, Typography, Box, Button, Rating, Chip } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Box, Button, Rating, Chip, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import useWishlistStore from '../../store/useWishlistStore';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
 
 const BookCard = ({ book }) => {
+  const { wishlist, toggleWishlist } = useWishlistStore();
+  const { isAuthenticated } = useAuth();
+  const [isToggling, setIsToggling] = useState(false);
+  const isFavorite = wishlist.some((item) => item._id === book._id);
+
+  const handleToggleWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error('Please login to add books to your wishlist');
+      return;
+    }
+
+    if (isToggling) return;
+
+    setIsToggling(true);
+    try {
+      const newState = await toggleWishlist(book);
+      if (newState) {
+        toast.success('Added to wishlist');
+      } else {
+        toast.success('Removed from wishlist');
+      }
+    } catch (error) {
+      toast.error('Failed to update wishlist');
+    } finally {
+      setIsToggling(false);
+    }
+  };
   return (
     <Card 
       sx={{ 
@@ -52,6 +88,32 @@ const BookCard = ({ book }) => {
             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.2)'
           }} 
         />
+        <IconButton
+          onClick={handleToggleWishlist}
+          disabled={isToggling}
+          sx={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            bgcolor: 'rgba(255, 255, 255, 0.8)',
+            '&:hover': {
+              bgcolor: 'rgba(255, 255, 255, 1)',
+              transform: 'scale(1.1)',
+            },
+            transition: 'all 0.2s',
+            zIndex: 10,
+            '&.Mui-disabled': {
+              bgcolor: 'rgba(255, 255, 255, 0.4)',
+            }
+          }}
+          size="small"
+        >
+          {isFavorite ? (
+            <FavoriteIcon sx={{ color: '#ef4444', fontSize: '1.2rem' }} />
+          ) : (
+            <FavoriteBorderIcon sx={{ color: '#666', fontSize: '1.2rem' }} />
+          )}
+        </IconButton>
         {/* Gradient Overlay for better contrast */}
         <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%)', pointerEvents: 'none' }} />
       </Box>

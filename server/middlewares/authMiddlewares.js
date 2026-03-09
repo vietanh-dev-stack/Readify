@@ -7,11 +7,19 @@ import JwtProvider from "../providers/jwtProvider.js"
 const authMiddleware = {
 
     isAuthorized: async (req, res, next) => {
-        //get accessToken from cookie
-        const accessToken = req.cookies?.accessToken
+        // Get accessToken from cookie or Authorization header
+        let accessToken = req.cookies?.accessToken
+
+        if (!accessToken && req.headers.authorization) {
+            const parts = req.headers.authorization.split(' ')
+            if (parts.length === 2 && parts[0] === 'Bearer') {
+                accessToken = parts[1]
+            }
+        }
 
         if (!accessToken) {
             next(new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized(Token not found)'))
+            return
         }
 
         try {

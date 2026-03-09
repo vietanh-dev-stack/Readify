@@ -85,10 +85,19 @@ const Detail = () => {
               position: 'relative',
               borderRadius: 4,
               overflow: 'hidden',
-              boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
               bgcolor: 'grey.100',
               mb: 2,
-              aspectRatio: '3/4'
+              width: {
+                xs: 260,
+                sm: 300,
+                md: 320
+              },
+              height: {
+                xs: 340,
+                sm: 390,
+                md: 420
+              },
+              mx: 'auto'
             }}
           >
             <Box
