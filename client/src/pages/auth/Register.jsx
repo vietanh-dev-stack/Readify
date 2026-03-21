@@ -31,22 +31,22 @@ const Register = () => {
     e.preventDefault();
 
     if (!name || !email || !password) {
-      toast.error('All fields are required');
+      toast.error('Vui lòng điền đầy đủ thông tin');
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error('Mật khẩu xác nhận không khớp');
       return;
     }
 
     setLoading(true);
     try {
       await authService.register(name, email, password, confirmPassword);
-      toast.success('Registration successful! Please login.');
+      toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
       navigate('/login');
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed.';
+      const message = err.response?.data?.message || 'Đăng ký thất bại.';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -99,7 +99,7 @@ const Register = () => {
           </Box>
 
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            Create an account and start your reading adventure today!
+            Tạo tài khoản và bắt đầu hành trình tri thức ngay hôm nay!
           </Typography>
 
           {/* Form */}
@@ -107,11 +107,11 @@ const Register = () => {
 
             {/* Name */}
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-              Full Name
+              Họ và tên
             </Typography>
             <TextField
               fullWidth
-              placeholder="Jane Doe"
+              placeholder="Nguyễn Văn A"
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={{ mb: 2 }}
@@ -131,7 +131,7 @@ const Register = () => {
 
             {/* Password */}
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-              Password
+              Mật khẩu
             </Typography>
             <TextField
               fullWidth
@@ -156,7 +156,7 @@ const Register = () => {
 
             {/* Confirm */}
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-              Confirm Password
+              Xác nhận mật khẩu
             </Typography>
             <TextField
               fullWidth
@@ -174,12 +174,12 @@ const Register = () => {
               disabled={loading}
               sx={{ mt: 3, py: 1.5, borderRadius: 2, fontWeight: 700 }}
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
             </Button>
 
             <Box sx={{ mt: 3, textAlign: 'center' }}>
               <Typography variant="body2">
-                Already have an account?{' '}
+                Đã có tài khoản?{' '}
                 <RouterLink
                   to="/login"
                   style={{
@@ -188,7 +188,7 @@ const Register = () => {
                     textDecoration: 'none'
                   }}
                 >
-                  Log in
+                  Đăng nhập
                 </RouterLink>
               </Typography>
             </Box>

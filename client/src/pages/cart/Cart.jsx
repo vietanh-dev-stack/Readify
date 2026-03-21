@@ -35,15 +35,15 @@ const Cart = () => {
   const total = subtotal + tax + shipping;
 
   if (loading && cartItems.length === 0) {
-    return <Typography sx={{ textAlign: 'center', py: 10 }}>Loading your cart...</Typography>;
+    return <Typography sx={{ textAlign: 'center', py: 10 }}>Đang tải giỏ hàng...</Typography>;
   }
 
   if (cartItems.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 10 }}>
-        <Typography variant="h4" gutterBottom fontWeight={800}>Your Cart is Empty</Typography>
-        <Typography variant="body1" color="text.secondary" mb={4}>Looks like you haven't added any books yet.</Typography>
-        <Button variant="contained" component={Link} to="/" size="large">Continue Shopping</Button>
+        <Typography variant="h4" gutterBottom fontWeight={800}>Giỏ hàng của bạn đang trống</Typography>
+        <Typography variant="body1" color="text.secondary" mb={4}>Có vẻ như bạn chưa thêm cuốn sách nào vào giỏ hàng.</Typography>
+        <Button variant="contained" component={Link} to="/" size="large">Tiếp tục mua sắm</Button>
       </Box>
     );
   }
@@ -51,7 +51,7 @@ const Cart = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h3" component="h1" gutterBottom fontWeight={800} mb={4}>
-        Shopping Cart
+        Giỏ hàng
       </Typography>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 4 }}>
@@ -78,7 +78,7 @@ const Cart = () => {
                         </Typography>
                       </Box>
                       <Typography variant="h6" fontWeight={700} color="primary">
-                        ${((item.bookId.discountPrice || item.bookId.price) * item.quantity).toFixed(2)}
+                        {((item.bookId.discountPrice || item.bookId.price) * item.quantity).toLocaleString('vi-VN')} đ
                       </Typography>
                     </Box>
 
@@ -98,7 +98,7 @@ const Cart = () => {
                         onClick={() => handleRemoveItem(item.bookId._id)}
                         sx={{ textTransform: 'none' }}
                       >
-                        Remove
+                        Xóa
                       </Button>
                     </Box>
                   </Box>
@@ -113,36 +113,36 @@ const Cart = () => {
         <Box>
           <Paper elevation={0} sx={{ p: 4, bgcolor: 'grey.50', borderRadius: 3, position: 'sticky', top: 100 }}>
             <Typography variant="h6" fontWeight={700} gutterBottom mb={3}>
-              Order Summary
+              Tóm tắt đơn hàng
             </Typography>
             
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Typography color="text.secondary">Subtotal</Typography>
-              <Typography fontWeight={600}>${subtotal.toFixed(2)}</Typography>
+              <Typography color="text.secondary">Tạm tính</Typography>
+              <Typography fontWeight={600}>{subtotal.toLocaleString('vi-VN')} đ</Typography>
             </Box>
             
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Typography color="text.secondary">Shipping</Typography>
-              <Typography fontWeight={600}>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</Typography>
+              <Typography color="text.secondary">Giao hàng</Typography>
+              <Typography fontWeight={600}>{shipping === 0 ? 'Miễn phí' : `${shipping.toLocaleString('vi-VN')} đ`}</Typography>
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Typography color="text.secondary">Tax (8%)</Typography>
-              <Typography fontWeight={600}>${tax.toFixed(2)}</Typography>
+              <Typography color="text.secondary">Thuế (8%)</Typography>
+              <Typography fontWeight={600}>{tax.toLocaleString('vi-VN')} đ</Typography>
             </Box>
 
             <Divider sx={{ mb: 3 }} />
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4, alignItems: 'center' }}>
-              <Typography variant="h6" fontWeight={800}>Total</Typography>
-              <Typography variant="h5" fontWeight={800} color="primary">${total.toFixed(2)}</Typography>
+              <Typography variant="h6" fontWeight={800}>Tổng cộng</Typography>
+              <Typography variant="h5" fontWeight={800} color="primary">{total.toLocaleString('vi-VN')} đ</Typography>
             </Box>
 
             <Button variant="contained" size="large" fullWidth sx={{ py: 1.5, borderRadius: 2, fontWeight: 700 }}>
-              Proceed to Checkout
+              Tiến hành thanh toán
             </Button>
             <Button variant="outlined" component={Link} to="/" fullWidth sx={{ mt: 2, py: 1.5, borderRadius: 2 }}>
-              Continue Shopping
+              Tiếp tục mua sắm
             </Button>
           </Paper>
         </Box>

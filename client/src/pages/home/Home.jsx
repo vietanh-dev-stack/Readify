@@ -1,105 +1,119 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Typography, Button, Container } from '@mui/material';
-import BookCard from '../../components/common/BookCard';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { Box, Container, Grid, Skeleton } from '@mui/material';
 import { fetchBooks } from '../../services/book.service';
 
-// sample data
-const mockBooks = [
-  { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 10.99, rating: 4.5, category: 'Classic', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600' },
-  { id: 2, title: '1984', author: 'George Orwell', price: 12.49, rating: 5.0, category: 'Dystopian', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600' },
-  { id: 3, title: 'Clean Code', author: 'Robert C. Martin', price: 29.99, rating: 4.8, category: 'Programming', cover: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=600' },
-  { id: 4, title: 'Dune', author: 'Frank Herbert', price: 15.99, rating: 4.7, category: 'Sci-Fi', cover: 'https://images.unsplash.com/photo-1614729939124-032f0b561bce?auto=format&fit=crop&q=80&w=600' },
-  { id: 5, title: 'The Hobbit', author: 'J.R.R. Tolkien', price: 14.99, rating: 4.9, category: 'Fantasy', cover: 'https://images.unsplash.com/photo-1629196914948-4e1b827e66df?auto=format&fit=crop&q=80&w=600' },
-  { id: 6, title: 'Sapiens', author: 'Yuval Noah Harari', price: 18.50, rating: 4.6, category: 'History', cover: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=600' }
-];
+import HeroSlider from '../../components/home/HeroSlider';
+import CategoryHighlights from '../../components/home/CategoryHighlights';
+import BookSection from '../../components/home/BookSection';
+import PromoBanner from '../../components/home/PromoBanner';
+import Testimonials from '../../components/home/Testimonials';
+import BlogSection from '../../components/home/BlogSection';
+import FadeInSection from '../../components/common/FadeInSection';
+
+const HomeSkeleton = () => (
+  <Box sx={{ width: '100%', pb: 10 }}>
+    <Skeleton variant="rectangular" width="100%" height={500} sx={{ borderRadius: { xs: 0, md: 5 }, mb: 8, mt: { xs: 0, md: 4 } }} />
+    <Container maxWidth="xl">
+      <Box sx={{ mb: 8 }}>
+        <Skeleton variant="text" width="30%" height={60} sx={{ mx: 'auto', mb: 4 }} />
+        <Grid container spacing={3} justifyContent="center">
+          {[1,2,3,4,5,6,7,8].map(i => (
+            <Grid item xs={6} sm={4} md={3} lg={1.5} key={i}>
+              <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 4 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      <Skeleton variant="rectangular" width="100%" height={300} sx={{ borderRadius: 4, mb: 8 }} />
+      <Box sx={{ mb: 8 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+          <Skeleton variant="text" width="20%" height={50} />
+          <Skeleton variant="text" width="10%" height={40} />
+        </Box>
+        <Grid container spacing={3}>
+          {[1,2,3,4,5].map(i => (
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={i}>
+              <Skeleton variant="rectangular" height={350} sx={{ borderRadius: 3 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </Container>
+  </Box>
+);
 
 const Home = () => {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchBooks()
-        setBooks(response.data)
+        const response = await fetchBooks();
+        setBooks(response.data || []);
       } catch (error) {
-        console.log(error)
+        console.error("Failed to fetch books:", error);
+      } finally {
+        // Small artificial delay to show off the premium skeleton smoothly if network is too fast
+        setTimeout(() => setLoading(false), 800);
       }
-    }
-    fetchData()
+    };
+    fetchData();
   }, []);
+
+  if (loading) {
+    return <HomeSkeleton />;
+  }
+
+  // Client-side distribution
+  const newArrivals = [...books].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 10);
+  const bestSellers = [...books].reverse().slice(0, 10); 
+  const recommended = [...books].slice(4, 14);
 
   return (
     <Box>
-      {/* Hero Section */}
-      <Box 
-        sx={{ 
-          bgcolor: 'primary.dark', 
-          color: 'primary.contrastText', 
-          borderRadius: 4, 
-          p: { xs: 4, md: 8 }, 
-          mb: 8,
-          position: 'relative',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: { xs: 'center', md: 'flex-start' },
-          textAlign: { xs: 'center', md: 'left' }
-        }}
-      >
-        <Box sx={{ position: 'relative', zIndex: 1, maxWidth: '600px' }}>
-          <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 2, display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' }, gap: 1, mb: 2, color: 'secondary.light' }}>
-            <AutoAwesomeIcon fontSize="small" /> Editor's Choice
-          </Typography>
-          <Typography variant="h2" component="h1" sx={{ fontWeight: 800, mb: 3, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-            Discover Your Next Great Adventure
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 4, color: 'grey.300', fontWeight: 400, lineHeight: 1.6 }}>
-            Explore thousands of books ranging from thrilling mysteries to insightful biographies. Enjoy special discounts on bestsellers.
-          </Typography>
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            size="large" 
-            endIcon={<ArrowForwardIcon />}
-            sx={{ px: 4, py: 1.5, borderRadius: '50px', fontWeight: 700 }}
-          >
-            Start Reading
-          </Button>
-        </Box>
-        {/* Decorative elements behind text can go here, like blurred glowing orbs */}
-      </Box>
+      <FadeInSection>
+        <HeroSlider />
+      </FadeInSection>
+      
+      <FadeInSection delay={0.1}>
+        <CategoryHighlights />
+      </FadeInSection>
+      
+      <FadeInSection delay={0.2}>
+        <div id="flash-sale">
+          <PromoBanner />
+        </div>
+      </FadeInSection>
+      
+      <FadeInSection delay={0.1}>
+        <div id="featured-books">
+          <BookSection 
+            title="Sách bán chạy hàng đầu" 
+            subtitle="Những đầu sách được độc giả săn đón nhất tuần này"
+            books={bestSellers} 
+            exploreLink="/best-sellers"
+          />
+        </div>
+      </FadeInSection>
 
-      {/* Popular Books Section */}
-      <Box sx={{ mb: 6 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 4 }}>
-          <Box>
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 800 }}>
-              Trending Now
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-              The most loved books by our community this week.
-            </Typography>
-          </Box>
-          <Button endIcon={<ArrowForwardIcon />} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            View All
-          </Button>
-        </Box>
+      <FadeInSection delay={0.1}>
+        <BookSection 
+          title="Sách mới cập nhật" 
+          subtitle="Khám phá những kiệt tác vừa mới xuất bản"
+          books={newArrivals} 
+          exploreLink="/new-arrivals"
+        />
+      </FadeInSection>
 
-        <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 4 }}>
-          {books.map((b) => (
-            <Box key={b.id}>
-              <BookCard book={b} />
-            </Box>
-          ))}
-        </Grid>
-        <Box sx={{ mt: 4, textAlign: 'center', display: { xs: 'block', sm: 'none' } }}>
-          <Button endIcon={<ArrowForwardIcon />} fullWidth variant="outlined">
-            View All Trending
-          </Button>
-        </Box>
-      </Box>
+
+      <FadeInSection delay={0.1}>
+        <BlogSection />
+      </FadeInSection>
+      
+      <FadeInSection delay={0.1}>
+        <Testimonials />
+      </FadeInSection>
     </Box>
   );
 };

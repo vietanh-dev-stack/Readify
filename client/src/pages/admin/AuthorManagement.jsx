@@ -29,9 +29,9 @@ const AuthorManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>Author Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>Quản lý tác giả</Typography>
         <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-          Add New Author
+          Thêm tác giả mới
         </Button>
       </Box>
 
@@ -39,7 +39,7 @@ const AuthorManagement = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search authors..."
+          placeholder="Tìm kiếm tác giả..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
@@ -57,14 +57,14 @@ const AuthorManagement = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Author</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Biography</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Tác giả</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Tiểu sử</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={3} align="center">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} align="center">Đang tải dữ liệu...</TableCell></TableRow>
             ) : filteredAuthors.map((author) => (
               <TableRow key={author._id} hover>
                 <TableCell>

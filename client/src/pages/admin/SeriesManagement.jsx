@@ -29,9 +29,9 @@ const SeriesManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>Series Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>Quản lý chuỗi sách (Series)</Typography>
         <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-          Add New Series
+          Thêm chuỗi sách mới
         </Button>
       </Box>
 
@@ -39,7 +39,7 @@ const SeriesManagement = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search series..."
+          placeholder="Tìm kiếm chuỗi sách..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
@@ -57,18 +57,18 @@ const SeriesManagement = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Description</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Tên chuỗi</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Mô tả</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={3} align="center">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} align="center">Đang tải dữ liệu...</TableCell></TableRow>
             ) : filteredSeries.map((s) => (
               <TableRow key={s._id} hover>
                 <TableCell sx={{ fontWeight: 600 }}>{s.name}</TableCell>
-                <TableCell>{s.description || 'No description'}</TableCell>
+                <TableCell>{s.description || 'Không có mô tả'}</TableCell>
                 <TableCell align="right">
                   <IconButton color="primary" size="small"><EditIcon /></IconButton>
                   <IconButton color="error" size="small"><DeleteIcon /></IconButton>

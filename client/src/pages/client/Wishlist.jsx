@@ -50,10 +50,10 @@ const Wishlist = () => {
             <FavoriteBorderIcon sx={{ fontSize: 60, color: 'grey.400' }} />
           </Box>
           <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
-            Your Wishlist is Empty
+            Danh sách yêu thích trống
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 400 }}>
-            You haven't added any books to your wishlist yet. Explore our collection and find your next favorite read!
+            Bạn chưa thêm cuốn sách nào vào danh sách yêu thích. Hãy khám phá bộ sưu tập của chúng tôi!
           </Typography>
           <Button
             variant="contained"
@@ -63,7 +63,7 @@ const Wishlist = () => {
             disableElevation
             sx={{ px: 4, py: 1.5, borderRadius: 2, fontWeight: 700 }}
           >
-            Browse Books
+            Khám phá sách
           </Button>
         </Box>
       </Container>
@@ -74,10 +74,10 @@ const Wishlist = () => {
     <Container maxWidth="xl">
       <Box sx={{ mb: 5 }}>
         <Typography variant="h3" sx={{ fontWeight: 900, mb: 1, color: 'text.primary' }}>
-          My Wishlist
+          Danh sách yêu thích
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          You have {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} in your wishlist.
+          Bạn có {wishlist.length} sản phẩm trong danh sách yêu thích.
         </Typography>
       </Box>
 

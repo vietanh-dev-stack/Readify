@@ -68,7 +68,7 @@ const Detail = () => {
       setOpenSnackbar(true);
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      const message = error.response?.data?.message || 'Failed to add to cart. Please try again.';
+      const message = error.response?.data?.message || 'Lỗi khi thêm vào giỏ hàng. Vui lòng thử lại.';
       setErrorMsg(message);
       setOpenErrorSnackbar(true);
     }
@@ -82,7 +82,7 @@ const Detail = () => {
     setOpenErrorSnackbar(false);
   };
 
-  if (!book) return <Typography sx={{ p: 4, textAlign: 'center' }}>Loading...</Typography>;
+  if (!book) return <Typography sx={{ p: 4, textAlign: 'center' }}>Đang tải...</Typography>;
 
   return (
     <Box>
@@ -92,10 +92,10 @@ const Detail = () => {
         sx={{ mb: 4 }}
       >
         <Link component={RouterLink} underline="hover" color="inherit" to="/">
-          Home
+          Trang chủ
         </Link>
         <Link component={RouterLink} underline="hover" color="inherit" to="/books">
-          Books
+          Sách
         </Link>
         <Typography color="text.primary">{book.title}</Typography>
       </Breadcrumbs>
@@ -131,7 +131,7 @@ const Detail = () => {
             />
             {book.stock > 0 && (
               <Chip
-                label="In Stock"
+                label="Còn hàng"
                 color="success"
                 size="small"
                 sx={{ position: 'absolute', top: 16, left: 16, fontWeight: 'bold' }}
@@ -182,23 +182,23 @@ const Detail = () => {
             </Typography>
 
             <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-              by <Link href="#" underline="hover" color="inherit">{book.authorIds?.map(a => a.name).join(', ') || book.author}</Link>
+              tác giả <Link href="#" underline="hover" color="inherit">{book.authorIds?.map(a => a.name).join(', ') || book.author}</Link>
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Rating value={book.ratingAvg || book.rating || 0} precision={0.5} readOnly />
               <Typography variant="body2" sx={{ ml: 1, mr: 2, color: 'text.secondary' }}>
-                {book.ratingAvg || book.rating || 0} ({book.ratingCount || book.reviews || 0} reviews)
+                {book.ratingAvg || book.rating || 0} ({book.ratingCount || book.reviews || 0} đánh giá)
               </Typography>
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 3, gap: 2 }}>
               <Typography variant="h4" color="primary" sx={{ fontWeight: 800 }}>
-                ${book.discountPrice > 0 ? book.discountPrice : book.price}
+                {(book.discountPrice > 0 ? book.discountPrice : book.price)?.toLocaleString('vi-VN')} đ
               </Typography>
               {(book.oldPrice || (book.discountPrice > 0 && book.price > book.discountPrice)) && (
                 <Typography variant="h6" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
-                  ${book.oldPrice || book.price}
+                  {book.oldPrice?.toLocaleString('vi-VN') || book.price?.toLocaleString('vi-VN')} đ
                 </Typography>
               )}
             </Box>
@@ -234,7 +234,7 @@ const Detail = () => {
                 disabled={book.stock === 0 || quantity > book.stock}
                 sx={{ flexGrow: 1, py: 1.5, borderRadius: 2, fontWeight: 700 }}
               >
-                {book.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                {book.stock === 0 ? 'Hết hàng' : 'Thêm vào giỏ'}
               </Button>
             </Box>
 
@@ -244,8 +244,8 @@ const Detail = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
                   <LocalShippingOutlinedIcon color="primary" />
                   <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Free Shipping</Typography>
-                    <Typography variant="body2" color="text.secondary">On orders over $50</Typography>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Giao hàng miễn phí</Typography>
+                    <Typography variant="body2" color="text.secondary">Cho đơn hàng trên 500.000 đ</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -253,8 +253,8 @@ const Detail = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
                   <VerifiedUserOutlinedIcon color="primary" />
                   <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Secure Payment</Typography>
-                    <Typography variant="body2" color="text.secondary">100% secure checkout</Typography>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Thanh toán an toàn</Typography>
+                    <Typography variant="body2" color="text.secondary">Bảo mật thông tin 100%</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -262,17 +262,17 @@ const Detail = () => {
 
             <Box sx={{ mt: 4, pt: 4, borderTop: '1px solid', borderColor: 'divider' }}>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
-                <strong>Publisher:</strong> {book.publisherId?.name || book.publisher}
+                <strong>Nhà xuất bản:</strong> {book.publisherId?.name || book.publisher}
               </Typography>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
-                <strong>Language:</strong> {book.bookLanguage}
+                <strong>Ngôn ngữ:</strong> {book.bookLanguage}
               </Typography>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1 }}>
-                <strong>Pages:</strong> {book.pages}
+                <strong>Số trang:</strong> {book.pages}
               </Typography>
               {book.releaseDate && (
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                  <strong>Release Date:</strong> {new Date(book.releaseDate).toLocaleDateString()}
+                  <strong>Ngày phát hành:</strong> {new Date(book.releaseDate).toLocaleDateString('vi-VN')}
                 </Typography>
               )}
             </Box>
@@ -282,7 +282,7 @@ const Detail = () => {
       </Box>
       <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={handleCloseSnackbar} severity="success" variant="filled" sx={{ width: '100%' }}>
-          Product added to cart successfully!
+          Đã thêm sản phẩm vào giỏ hàng!
         </Alert>
       </Snackbar>
 

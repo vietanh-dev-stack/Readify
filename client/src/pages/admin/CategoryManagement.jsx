@@ -29,9 +29,9 @@ const CategoryManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>Category Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>Quản lý danh mục</Typography>
         <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-          Add New Category
+          Thêm danh mục mới
         </Button>
       </Box>
 
@@ -39,7 +39,7 @@ const CategoryManagement = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search categories..."
+          placeholder="Tìm kiếm danh mục..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
@@ -57,18 +57,18 @@ const CategoryManagement = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Description</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Tên danh mục</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Mô tả</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={3} align="center">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} align="center">Đang tải dữ liệu...</TableCell></TableRow>
             ) : filteredCategories.map((cat) => (
               <TableRow key={cat._id} hover>
                 <TableCell sx={{ fontWeight: 600 }}>{cat.name}</TableCell>
-                <TableCell>{cat.description || 'No description'}</TableCell>
+                <TableCell>{cat.description || 'Không có mô tả'}</TableCell>
                 <TableCell align="right">
                   <IconButton color="primary" size="small"><EditIcon /></IconButton>
                   <IconButton color="error" size="small"><DeleteIcon /></IconButton>

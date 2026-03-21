@@ -22,7 +22,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error('Email and password are required');
+      toast.error('Vui lòng nhập email và mật khẩu');
       return;
     }
 
@@ -32,10 +32,10 @@ const Login = () => {
       const { userInfo, accessToken } = response.data;
 
       login(userInfo, accessToken);
-      toast.success('Login successful!');
+      toast.success('Đăng nhập thành công!');
       navigate('/');
     } catch (err) {
-      const message = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      const message = err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -56,14 +56,14 @@ const Login = () => {
 
       login(userInfo, accessToken)
 
-      toast.success("Login with Google successful!")
+      toast.success("Đăng nhập bằng Google thành công!")
 
       navigate('/')
 
     } catch (err) {
 
       const message =
-        err.response?.data?.message || "Google login failed"
+        err.response?.data?.message || "Đăng nhập bằng Google thất bại"
 
       toast.error(message)
 
@@ -111,7 +111,7 @@ const Login = () => {
           </Box>
 
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            Welcome back! Please enter your details.
+            Chào mừng bạn quay lại! Vui lòng nhập thông tin để đăng nhập.
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
@@ -119,14 +119,14 @@ const Login = () => {
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Email</Typography>
             <TextField
               fullWidth
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
               variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               sx={{ mb: 3 }}
             />
 
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Password</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Mật khẩu</Typography>
             <TextField
               fullWidth
               placeholder="••••••••"
@@ -153,7 +153,7 @@ const Login = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
               <RouterLink to="#" style={{ color: '#4F46E5', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 }}>
-                Forgot password?
+                Quên mật khẩu?
               </RouterLink>
             </Box>
 
@@ -165,11 +165,11 @@ const Login = () => {
               disabled={loading}
               sx={{ py: 1.5, borderRadius: 2, fontWeight: 700, mb: 3 }}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
             </Button>
 
             <Divider sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary">Or continue with</Typography>
+              <Typography variant="body2" color="text.secondary">Hoặc tiếp tục với</Typography>
             </Divider>
 
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -180,15 +180,15 @@ const Login = () => {
                 text="continue_with"
                 width="100%"
                 onSuccess={handleGoogleLogin}
-                onError={() => toast.error("Google Login Failed")}
+                onError={() => toast.error("Lỗi đăng nhập Google")}
               />
             </Box>
 
             <Box sx={{ mt: 4, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                Don't have an account?{' '}
+                Chưa có tài khoản?{' '}
                 <RouterLink to="/register" style={{ color: '#4F46E5', fontWeight: 700, textDecoration: 'none' }}>
-                  Sign up for free
+                  Đăng ký miễn phí
                 </RouterLink>
               </Typography>
             </Box>

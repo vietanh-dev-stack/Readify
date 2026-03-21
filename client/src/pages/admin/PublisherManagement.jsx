@@ -29,9 +29,9 @@ const PublisherManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>Publisher Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>Quản lý nhà xuất bản</Typography>
         <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-          Add New Publisher
+          Thêm nhà xuất bản mới
         </Button>
       </Box>
 
@@ -39,7 +39,7 @@ const PublisherManagement = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search publishers..."
+          placeholder="Tìm kiếm nhà xuất bản..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
@@ -57,18 +57,18 @@ const PublisherManagement = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Contact</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Tên nhà xuất bản</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Liên hệ</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={3} align="center">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} align="center">Đang tải dữ liệu...</TableCell></TableRow>
             ) : filteredPublishers.map((pub) => (
               <TableRow key={pub._id} hover>
                 <TableCell sx={{ fontWeight: 600 }}>{pub.name}</TableCell>
-                <TableCell>{pub.email || 'N/A'}</TableCell>
+                <TableCell>{pub.email || 'Không có'}</TableCell>
                 <TableCell align="right">
                   <IconButton color="primary" size="small"><EditIcon /></IconButton>
                   <IconButton color="error" size="small"><DeleteIcon /></IconButton>

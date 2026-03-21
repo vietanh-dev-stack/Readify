@@ -30,9 +30,9 @@ const UserManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>User Management</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800 }}>Quản lý người dùng</Typography>
         <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: 2 }}>
-          Add New User
+          Thêm người dùng mới
         </Button>
       </Box>
 
@@ -40,7 +40,7 @@ const UserManagement = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search users by name or email..."
+          placeholder="Tìm kiếm người dùng theo tên hoặc email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
@@ -58,21 +58,21 @@ const UserManagement = () => {
         <Table sx={{ minWidth: 650 }} aria-label="user table">
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>User</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Người dùng</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Role</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Vai trò</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>Trạng thái</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} align="center">Loading users...</TableCell>
+                <TableCell colSpan={5} align="center">Đang tải dữ liệu người dùng...</TableCell>
               </TableRow>
             ) : filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center">No users found</TableCell>
+                <TableCell colSpan={5} align="center">Không tìm thấy người dùng nào</TableCell>
               </TableRow>
             ) : filteredUsers.map((user) => (
               <TableRow key={user._id} hover>
@@ -93,7 +93,7 @@ const UserManagement = () => {
                 </TableCell>
                 <TableCell>
                   <Chip 
-                    label="Active" 
+                    label="Hoạt động" 
                     size="small" 
                     color="success" 
                     variant="outlined"

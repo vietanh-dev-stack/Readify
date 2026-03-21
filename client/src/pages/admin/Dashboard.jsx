@@ -15,7 +15,7 @@ const StatCard = ({ title, value, icon, color, trend }) => (
           </Typography>
           {trend && (
             <Typography variant="body2" sx={{ mt: 1, color: trend.startsWith('+') ? 'success.main' : 'error.main', fontWeight: 600 }}>
-              {trend} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>from last month</Box>
+              {trend} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>so với tháng trước</Box>
             </Typography>
           )}
         </Box>
@@ -37,16 +37,16 @@ const StatCard = ({ title, value, icon, color, trend }) => (
 
 const Dashboard = () => {
   const stats = [
-    { title: 'Total Users', value: '1,284', icon: <PeopleIcon />, color: 'primary', trend: '+12.5%' },
-    { title: 'Total Books', value: '452', icon: <BookIcon />, color: 'success', trend: '+5.2%' },
-    { title: 'New Orders', value: '86', icon: <OrderIcon />, color: 'warning', trend: '+18.2%' },
-    { title: 'Total Revenue', value: '$12,450', icon: <SalesIcon />, color: 'info', trend: '+24.1%' },
+    { title: 'Tổng người dùng', value: '1,284', icon: <PeopleIcon />, color: 'primary', trend: '+12.5%' },
+    { title: 'Tổng đầu sách', value: '452', icon: <BookIcon />, color: 'success', trend: '+5.2%' },
+    { title: 'Đơn hàng mới', value: '86', icon: <OrderIcon />, color: 'warning', trend: '+18.2%' },
+    { title: 'Tổng doanh thu', value: '12.450.000 đ', icon: <SalesIcon />, color: 'info', trend: '+24.1%' },
   ];
 
   return (
     <Box>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
-        Dashboard Overview
+        Tổng quan Dashboard
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -60,12 +60,12 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, borderRadius: 4, height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography color="text.secondary">Sales Analytics Chart Placeholder</Typography>
+            <Typography color="text.secondary">Biểu đồ phân tích doanh thu</Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, borderRadius: 4, height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography color="text.secondary">Recent Orders List Placeholder</Typography>
+            <Typography color="text.secondary">Danh sách đơn hàng gần đây</Typography>
           </Paper>
         </Grid>
       </Grid>
