@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import { Box, Typography, Button, Grid, Rating, Divider, Chip, Breadcrumbs, Link, IconButton, Paper } from '@mui/material';
+import { Box, Typography, Button, Grid, Rating, Divider, Chip, Breadcrumbs, Link, IconButton, Paper, Snackbar, Alert } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -8,6 +8,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import { fetchBookById } from '../../services/book.service';
+import useCartStore from '../../store/useCartStore';
 
 const mockBook = {
   id: 1,
@@ -31,6 +32,10 @@ const Detail = () => {
   const [book, setBook] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  const { addToCart: addToCartStore } = useCartStore();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,11 +60,29 @@ const Detail = () => {
     if (quantity > 1) setQuantity(prev => prev - 1);
   };
 
-  const addToCart = () => {
-    alert(`Added ${quantity} copies of "${book.title}" to cart`);
+  const addToCart = async () => {
+    if (!book) return;
+    
+    try {
+      await addToCartStore(book._id, quantity, book);
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      const message = error.response?.data?.message || 'Failed to add to cart. Please try again.';
+      setErrorMsg(message);
+      setOpenErrorSnackbar(true);
+    }
   };
 
-  if (!book) return <Typography>Loading...</Typography>;
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+    setOpenErrorSnackbar(false);
+  };
+
+  if (!book) return <Typography sx={{ p: 4, textAlign: 'center' }}>Loading...</Typography>;
 
   return (
     <Box>
@@ -208,9 +231,10 @@ const Detail = () => {
                 size="large"
                 startIcon={<ShoppingCartIcon />}
                 onClick={addToCart}
+                disabled={book.stock === 0 || quantity > book.stock}
                 sx={{ flexGrow: 1, py: 1.5, borderRadius: 2, fontWeight: 700 }}
               >
-                Add to Cart
+                {book.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
               </Button>
             </Box>
 
@@ -256,6 +280,17 @@ const Detail = () => {
           </Box>
         </Box>
       </Box>
+      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert onClose={handleCloseSnackbar} severity="success" variant="filled" sx={{ width: '100%' }}>
+          Product added to cart successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={openErrorSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert onClose={handleCloseSnackbar} severity="error" variant="filled" sx={{ width: '100%' }}>
+          {errorMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

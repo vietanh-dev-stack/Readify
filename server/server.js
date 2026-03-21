@@ -4,7 +4,7 @@ import env from './configs/environment.js'
 import connectDB from './configs/mongodb.js'
 import APIs from './routes/index.js'
 import cookieParser from 'cookie-parser'
-
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware.js'
 
 const app = express()
 const hostname = env.APP_HOST
@@ -14,6 +14,8 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 app.use('/api', APIs)
+
+app.use(errorHandlingMiddleware)
 
 connectDB()
 

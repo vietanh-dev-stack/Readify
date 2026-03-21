@@ -21,19 +21,23 @@ import PersonIcon from '@mui/icons-material/Person';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import useWishlistStore from '../../store/useWishlistStore';
+import useCartStore from '../../store/useCartStore';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const cartCount = 0;
   const { wishlist, fetchWishlist } = useWishlistStore();
+  const { cartItems, fetchCart } = useCartStore();
+  
   const wishlistCount = wishlist.length;
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchWishlist();
+      fetchCart();
     }
-  }, [isAuthenticated, fetchWishlist]);
+  }, [isAuthenticated, fetchWishlist, fetchCart]);
 
   const [anchorElUser, setAnchorElUser] = useState(null);
 

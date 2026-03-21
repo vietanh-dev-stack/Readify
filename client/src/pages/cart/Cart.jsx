@@ -1,51 +1,44 @@
-import React, { useState } from 'react';
-import { Typography, Box, Grid, Paper, IconButton, Button, Divider, Container } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Typography, Box, Grid, Paper, IconButton, Button, Divider } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Link } from 'react-router-dom';
+import useCartStore from '../../store/useCartStore';
 
 const Cart = () => {
-  // static sample cart
-  const [cart, setCart] = useState([
-    { 
-      id: 1, 
-      title: 'The Great Gatsby', 
-      author: 'F. Scott Fitzgerald',
-      price: 10.99, 
-      quantity: 2,
-      cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=150'
-    },
-    { 
-      id: 2, 
-      title: '1984', 
-      author: 'George Orwell',
-      price: 12.49, 
-      quantity: 1,
-      cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=150'
-    },
-  ]);
+  const { cartItems, fetchCart, updateCartItem, removeFromCart, loading } = useCartStore();
 
-  const updateQuantity = (id, change) => {
-    setCart(cart.map(item => {
-      if (item.id === id) {
-        const newQuantity = Math.max(1, item.quantity + change);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
+  const handleUpdateQuantity = async (bookId, newQuantity) => {
+    try {
+      await updateCartItem(bookId, newQuantity);
+    } catch (error) {
+      console.error('Failed to update quantity:', error);
+    }
   };
 
-  const removeItem = (id) => {
-    setCart(cart.filter(item => item.id !== id));
+  const handleRemoveItem = async (bookId) => {
+    try {
+      await removeFromCart(bookId);
+    } catch (error) {
+      console.error('Failed to remove item:', error);
+    }
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.bookId.discountPrice || item.bookId.price) * item.quantity, 0);
   const tax = subtotal * 0.08;
-  const shipping = subtotal > 50 ? 0 : 5.99;
+  const shipping = subtotal > 50 || subtotal === 0 ? 0 : 5.99;
   const total = subtotal + tax + shipping;
 
-  if (cart.length === 0) {
+  if (loading && cartItems.length === 0) {
+    return <Typography sx={{ textAlign: 'center', py: 10 }}>Loading your cart...</Typography>;
+  }
+
+  if (cartItems.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 10 }}>
         <Typography variant="h4" gutterBottom fontWeight={800}>Your Cart is Empty</Typography>
@@ -65,44 +58,44 @@ const Cart = () => {
         {/* Cart Items List */}
         <Box>
           <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, overflow: 'hidden' }}>
-            {cart.map((item, index) => (
-              <Box key={item.id}>
+            {cartItems.map((item, index) => (
+              <Box key={item.bookId._id}>
                 <Box sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3 }}>
                   <Box 
                     component="img" 
-                    src={item.cover} 
-                    alt={item.title} 
+                    src={item.bookId.coverImage || item.bookId.cover} 
+                    alt={item.bookId.title} 
                     sx={{ width: { xs: '100%', sm: 100 }, height: 140, objectFit: 'cover', borderRadius: 2 }} 
                   />
                   <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <Box>
-                        <Typography variant="h6" fontWeight={700} component={Link} to={`/product/${item.id}`} sx={{ textDecoration: 'none', color: 'text.primary', '&:hover': { color: 'primary.main' } }}>
-                          {item.title}
+                        <Typography variant="h6" fontWeight={700} component={Link} to={`/book/${item.bookId._id}`} sx={{ textDecoration: 'none', color: 'text.primary', '&:hover': { color: 'primary.main' } }}>
+                          {item.bookId.title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
-                          By {item.author}
+                          {item.bookId.authorIds?.map(a => a.name).join(', ') || item.bookId.author}
                         </Typography>
                       </Box>
                       <Typography variant="h6" fontWeight={700} color="primary">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ${((item.bookId.discountPrice || item.bookId.price) * item.quantity).toFixed(2)}
                       </Typography>
                     </Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 'auto' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', mt: 'auto' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-                        <IconButton size="small" onClick={() => updateQuantity(item.id, -1)} disabled={item.quantity <= 1}>
+                        <IconButton size="small" onClick={() => handleUpdateQuantity(item.bookId._id, item.quantity - 1)} disabled={item.quantity <= 1}>
                           <RemoveIcon fontSize="small" />
                         </IconButton>
                         <Typography sx={{ px: 2, fontWeight: 600 }}>{item.quantity}</Typography>
-                        <IconButton size="small" onClick={() => updateQuantity(item.id, 1)}>
+                        <IconButton size="small" onClick={() => handleUpdateQuantity(item.bookId._id, item.quantity + 1)} disabled={item.quantity >= (item.bookId.stock || 0)}>
                           <AddIcon fontSize="small" />
                         </IconButton>
                       </Box>
                       <Button 
                         color="error" 
                         startIcon={<DeleteOutlineIcon />} 
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => handleRemoveItem(item.bookId._id)}
                         sx={{ textTransform: 'none' }}
                       >
                         Remove
@@ -110,7 +103,7 @@ const Cart = () => {
                     </Box>
                   </Box>
                 </Box>
-                {index < cart.length - 1 && <Divider />}
+                {index < cartItems.length - 1 && <Divider />}
               </Box>
             ))}
           </Paper>
@@ -134,7 +127,7 @@ const Cart = () => {
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Typography color="text.secondary">Tax</Typography>
+              <Typography color="text.secondary">Tax (8%)</Typography>
               <Typography fontWeight={600}>${tax.toFixed(2)}</Typography>
             </Box>
 

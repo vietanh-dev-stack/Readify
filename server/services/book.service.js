@@ -231,9 +231,18 @@ const bookService = {
         try {
             const book = await Book.findOne({ _id: bId, status: { $in: ['active', 'out_of_stock'] } })
                 .populate(['categoryId', 'seriesId', 'authorIds', 'publisherId'])
+                .lean()
             if (!book) {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Book not found')
             }
+
+            const inventory = await Inventory.findOne({ bookId: bId })
+            if (inventory) {
+                book.stock = Math.max(0, inventory.quantity - (inventory.reserved || 0))
+            } else {
+                book.stock = 0
+            }
+
             return book
         } catch (error) {
             throw error

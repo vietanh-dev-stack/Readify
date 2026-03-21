@@ -9,6 +9,15 @@ import Wishlist from '../pages/client/Wishlist';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoute from './ProtectedRoute';
 
+import AdminLayout from '../components/layout/AdminLayout';
+import Dashboard from '../pages/admin/Dashboard';
+import UserManagement from '../pages/admin/UserManagement';
+import BookManagement from '../pages/admin/BookManagement';
+import CategoryManagement from '../pages/admin/CategoryManagement';
+import AuthorManagement from '../pages/admin/AuthorManagement';
+import PublisherManagement from '../pages/admin/PublisherManagement';
+import SeriesManagement from '../pages/admin/SeriesManagement';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -27,6 +36,24 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="wishlist" element={<Wishlist />} />
+      </Route>
+
+      {/* admin layout */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="books" element={<BookManagement />} />
+        <Route path="categories" element={<CategoryManagement />} />
+        <Route path="authors" element={<AuthorManagement />} />
+        <Route path="publishers" element={<PublisherManagement />} />
+        <Route path="series" element={<SeriesManagement />} />
       </Route>
 
       {/* fallback */}

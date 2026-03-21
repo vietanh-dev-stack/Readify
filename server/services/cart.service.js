@@ -18,8 +18,8 @@ const cartService = {
 
         const inventory = await Inventory.findOne({ bookId }).lean()
 
-        if (!inventory) {
-            throw new ApiError(StatusCodes.NOT_FOUND, 'Inventory not found')
+        if (!inventory || (inventory.quantity - (inventory.reserved || 0)) <= 0) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Product is out of stock')
         }
 
         const available = inventory.quantity - inventory.reserved
@@ -88,13 +88,29 @@ const cartService = {
 
     getCart: async (userId) => {
         try {
-            const cart = await Cart.findOne({ userId }).populate({
-                path: 'items.bookId',
-                select: 'title price discountPrice coverImage status'
-            })
+            const cart = await Cart.findOne({ userId })
+                .populate({
+                    path: 'items.bookId',
+                    select: 'title price discountPrice coverImage status'
+                })
+                .lean()
             if (!cart) {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Cart not found')
             }
+
+            // Filter out items where the book was deleted from the DB
+            cart.items = cart.items.filter(item => item.bookId != null);
+
+            // Attaching inventory stock to each cart item
+            for (let item of cart.items) {
+                const inventory = await Inventory.findOne({ bookId: item.bookId._id }).lean()
+                if (inventory) {
+                    item.bookId.stock = Math.max(0, inventory.quantity - (inventory.reserved || 0))
+                } else {
+                    item.bookId.stock = 0
+                }
+            }
+
             return cart
         } catch (error) {
             throw error
@@ -113,8 +129,8 @@ const cartService = {
             }
 
             const inventory = await Inventory.findOne({ bookId })
-            if (!inventory) {
-                throw new ApiError(StatusCodes.NOT_FOUND, 'Inventory not found')
+            if (!inventory || (inventory.quantity - (inventory.reserved || 0)) <= 0) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, 'Product is out of stock')
             }
 
             const available = inventory.quantity - inventory.reserved
