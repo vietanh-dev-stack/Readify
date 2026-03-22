@@ -38,22 +38,40 @@ const bookValidation = {
     },
 
     update: async (req, res, next) => {
+        if (req.body.authorIds) {
+            if (typeof req.body.authorIds === 'string') {
+                try {
+                    req.body.authorIds = JSON.parse(req.body.authorIds)
+                } catch {
+                    req.body.authorIds = [req.body.authorIds]
+                }
+            }
+        }
+
+        ['price', 'discountPrice', 'pages'].forEach(field => {
+            if (req.body[field] !== undefined) {
+                const num = Number(req.body[field])
+                if (isNaN(num)) {
+                    return next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, `${field} must be a number`))
+                }
+                req.body[field] = num
+            }
+        })
+
         const schema = Joi.object({
             title: Joi.string().trim(),
+            description: Joi.string().allow(''),
+            categoryId: objectId,
+            seriesId: objectId,
+            publisherId: objectId,
             authorIds: Joi.array().items(objectId).min(1),
-
             price: Joi.number().positive(),
             discountPrice: Joi.number().min(0),
-
-            coverImage: Joi.string().uri(),
-            images: Joi.array().items(Joi.string().uri()),
-
             pages: Joi.number().integer().min(1),
             bookLanguage: Joi.string().allow(''),
-
             releaseDate: Joi.date(),
             status: Joi.string().valid('active', 'hidden', 'out_of_stock')
-        })
+        }).min(1)
 
         try {
             await schema.validateAsync(req.body, { abortEarly: false })
