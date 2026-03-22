@@ -10,8 +10,7 @@ const seriesSchema = new mongoose.Schema({
     totalVolumes: Number,
     status: {
         type: String,
-        enum: ['ongoing', 'completed'],
-        default: 'ongoing'
+        enum: ['ongoing', 'completed']
     },
     isDelete: {
         type: Boolean,
