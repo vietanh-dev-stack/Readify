@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Avatar, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Avatar, Menu, MenuItem, Tooltip, CssBaseline } from '@mui/material';
 import { Menu as MenuIcon, Dashboard as DashboardIcon, People as PeopleIcon, MenuBook as BookIcon, Category as CategoryIcon, Person as AuthorIcon, Business as PublisherIcon, AutoStories as SeriesIcon, Logout as LogoutIcon, Home as HomeIcon } from '@mui/icons-material';
 import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -88,12 +88,12 @@ const AdminLayout = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%', bgcolor: '#f8fafc' }}>
+      <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          zIndex: (theme) => theme.zIndex.drawer + 1,
           bgcolor: 'white',
           color: 'text.primary',
           boxShadow: 'none',
@@ -111,7 +111,7 @@ const AdminLayout = () => {
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700 }}>
             {menuItems.find(item => location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path)))?.text || 'Admin Panel'}
           </Typography>
@@ -185,10 +185,13 @@ const AdminLayout = () => {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: '64px'
+          flex: 1,
+          p: { xs: 2, md: 3 },
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          mt: '64px',
+          overflowX: 'hidden'
         }}
       >
         <Outlet />

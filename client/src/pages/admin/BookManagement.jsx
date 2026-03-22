@@ -11,7 +11,7 @@ const BookManagement = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axiosCustomize.get('/v1/book');
+        const response = await axiosCustomize.get('/book');
         setBooks(response.data?.books || []);
       } catch (error) {
         console.error('Failed to fetch books:', error);
