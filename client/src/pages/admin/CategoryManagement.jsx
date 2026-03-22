@@ -19,7 +19,7 @@ const CategoryManagement = () => {
     setLoading(true)
     try {
       const response = await fetchCategories()
-      setCategories(response.data?.categories || [])
+      setCategories(response.data || [])
     } catch (error) {
       console.log(error)
     } finally {

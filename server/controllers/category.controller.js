@@ -18,10 +18,7 @@ const categoryController = {
     getCategory: async (req, res, next) => {
         try {
             const result = await categoryService.getCategory()
-            return res.status(StatusCodes.OK).json({
-                success: true,
-                categories: result
-            })
+            return res.status(StatusCodes.OK).json(result)
         } catch (error) {
             next(error)
         }
