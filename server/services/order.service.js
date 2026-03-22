@@ -160,7 +160,7 @@ const orderService = {
         return order
     },
 
-    getOrders: async (userId, page = 1, limit = 10) => {
+    getOrder: async (userId, page = 1, limit = 10) => {
         const skip = (page - 1) * limit
 
         const orders = await Order.find({ userId })
