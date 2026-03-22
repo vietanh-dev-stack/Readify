@@ -36,7 +36,7 @@ const categoryService = {
 
     getCategory: async () => {
         try {
-            const cates = await Category.find({isDelete: false})
+            const cates = await Category.find({ isDelete: false })
             return cates
         } catch (error) {
             throw error
@@ -78,7 +78,7 @@ const categoryService = {
         try {
             const cate = await Category.findById(cateId)
 
-            if(!cate || cate.isDelete){
+            if (!cate || cate.isDelete) {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found')
             }
 

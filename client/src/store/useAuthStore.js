@@ -12,7 +12,7 @@ const useAuthStore = create(
         const user = { 
           ...userData, 
           name: userData.username || userData.name ,
-          avatar: userData.avatar
+          avatar: userData.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
         };
         set({ 
           user, 

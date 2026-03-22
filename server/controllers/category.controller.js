@@ -18,7 +18,10 @@ const categoryController = {
     getCategory: async (req, res, next) => {
         try {
             const result = await categoryService.getCategory()
-            return res.status(StatusCodes.OK).json(result)
+            return res.status(StatusCodes.OK).json({
+                success: true,
+                categories: result
+            })
         } catch (error) {
             next(error)
         }
@@ -40,7 +43,7 @@ const categoryController = {
             const userId = req.jwtDecoded._id
             const cateId = req.params.cateId
             const result = await categoryService.deleteCategory(cateId, userId)
-            return res.status(StatusCodes.OK).json({message: 'Category delete successfully'})
+            return res.status(StatusCodes.OK).json({ message: 'Category delete successfully' })
         } catch (error) {
             next(error)
         }
