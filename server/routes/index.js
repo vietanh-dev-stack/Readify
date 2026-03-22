@@ -9,6 +9,8 @@ import invenRoutes from './v1/inventory.route.js'
 import wishlistRoutes from './v1/wishlist.route.js'
 import cartRoutes from './v1/cart.route.js'
 import userRoutes from './v1/user.route.js'
+import orderRoutes from './v1/order.route.js'
+import addressRoutes from './v1/address.route.js'
 
 const Router = express.Router()
 
@@ -26,5 +28,7 @@ Router.use('/inventory', invenRoutes)
 Router.use('/wishlist', wishlistRoutes)
 Router.use('/cart', cartRoutes)
 Router.use('/user', userRoutes)
+Router.use('/order', orderRoutes)
+Router.use('/address', addressRoutes)
 
 export default Router

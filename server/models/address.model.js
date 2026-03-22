@@ -5,14 +5,23 @@ const addressSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     },
+    name: String,
+    phone: String,
+    province: String,
+    district: String,
+    ward: String,
+    street: String,
     fullAddress: String,
-    city: String,
     isDefault: {
         type: Boolean,
         default: false
     }
 }, { timestamps: true })
 
-addressSchema.index({ userId: 1 })
+
+addressSchema.index(
+    { userId: 1, isDefault: 1 },
+    { unique: true, partialFilterExpression: { isDefault: true } }
+)
 
 export default mongoose.model('addresses', addressSchema)
