@@ -9,11 +9,11 @@ const cartValidation = {
     create: async (req, res, next) => {
         const schema = Joi.object({
             bookId: objectId.required(),
-            quantity: Joi.number().integer().min(0).required().messages({
+            quantity: Joi.number().integer().min(1).required().messages({
                 'any.required': 'Quantity is required',
                 'number.base': 'Quantity must be a number',
                 'number.integer': 'Quantity must be a integer',
-                'number.min': 'Quantity must be at least 0'
+                'number.min': 'Quantity must be at least 1'
             })
         })
 
@@ -27,10 +27,10 @@ const cartValidation = {
 
     update: async (req, res, next) => {
         const schema = Joi.object({
-            quantity: Joi.number().integer().min(0).messages({
+            quantity: Joi.number().integer().min(1).messages({
                 'number.base': 'Quantity must be a number',
                 'number.integer': 'Quantity must be a integer',
-                'number.min': 'Quantity must be at least 0'
+                'number.min': 'Quantity must be at least 1'
             })
         })
 

@@ -6,24 +6,25 @@ import {
 } from '@mui/material';
 import {
   People as PeopleIcon,
-  MenuBook as BookIcon,
+  AutoStories as BookIcon,
   ShoppingCart as OrderIcon,
   TrendingUp as SalesIcon,
   TrendingDown as TrendingDownIcon,
   MoreVert as MoreVertIcon,
-  FiberManualRecord as FiberManualRecordIcon
+  FiberManualRecord as FiberManualRecordIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, BarChart, Bar
+  Tooltip, ResponsiveContainer
 } from 'recharts';
 
 // Mock Data
 const stats = [
-  { title: 'Tổng người dùng', value: '1,284', icon: <PeopleIcon />, color: '#4F46E5', trend: '+12.5%', isUp: true },
-  { title: 'Tổng sản phẩm', value: '452', icon: <BookIcon />, color: '#10B981', trend: '+5.2%', isUp: true },
-  { title: 'Đơn hàng mới', value: '86', icon: <OrderIcon />, color: '#F59E0B', trend: '+18.2%', isUp: true },
-  { title: 'Tổng doanh thu', value: '12.45M ₫', icon: <SalesIcon />, color: '#8B5CF6', trend: '+24.1%', isUp: true },
+  { title: 'Người dùng mới', value: '1,284', icon: <PeopleIcon />, color: '#6366F1', trend: '+12.5%', isUp: true },
+  { title: 'Sách trong kho', value: '452', icon: <BookIcon />, color: '#10B981', trend: '+5.2%', isUp: true },
+  { title: 'Đơn hàng tháng', value: '86', icon: <OrderIcon />, color: '#F59E0B', trend: '+18.2%', isUp: true },
+  { title: 'Doanh thu (VNĐ)', value: '12.45M', icon: <SalesIcon />, color: '#8B5CF6', trend: '+24.1%', isUp: true },
 ];
 
 const revenueData = [
@@ -37,213 +38,178 @@ const revenueData = [
 ];
 
 const recentOrders = [
-  { id: '#ORD-7234', customer: 'Nguyễn Văn A', amount: '1,250,000 ₫', status: 'Completed', date: '2 giờ trước' },
-  { id: '#ORD-7235', customer: 'Trần Thị B', amount: '450,000 ₫', status: 'Pending', date: '5 giờ trước' },
-  { id: '#ORD-7236', customer: 'Lê Văn C', amount: '890,000 ₫', status: 'Shipping', date: '1 ngày trước' },
-  { id: '#ORD-7237', customer: 'Phạm Minh D', amount: '2,100,000 ₫', status: 'Cancelled', date: '1 ngày trước' },
-  { id: '#ORD-7238', customer: 'Hoàng Anh E', amount: '670,000 ₫', status: 'Completed', date: '2 ngày trước' },
+  { id: '#ORD-7234', customer: 'Nguyễn Văn A', amount: '1,250,000 ₫', status: 'Hoàn thành', date: '2 giờ trước' },
+  { id: '#ORD-7235', customer: 'Trần Thị B', amount: '450,000 ₫', status: 'Chờ xử lý', date: '5 giờ trước' },
+  { id: '#ORD-7236', customer: 'Lê Văn C', amount: '890,000 ₫', status: 'Đang giao', date: '1 ngày trước' },
+  { id: '#ORD-7237', customer: 'Phạm Minh D', amount: '2,100,000 ₫', status: 'Đã hủy', date: '1 ngày trước' },
+  { id: '#ORD-7238', customer: 'Hoàng Anh E', amount: '670,000 ₫', status: 'Hoàn thành', date: '2 ngày trước' },
 ];
 
 const topBooks = [
   { title: 'Đắc Nhân Tâm', author: 'Dale Carnegie', sales: 124, stock: 45, image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=100' },
   { title: 'Nhà Giả Kim', author: 'Paulo Coelho', sales: 98, stock: 12, image: 'https://images.unsplash.com/photo-1543003923-380af366432b?auto=format&fit=crop&q=80&w=100' },
   { title: 'Sapiens', author: 'Yuval Noah Harari', sales: 86, stock: 28, image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=100' },
+  { title: 'Lược Sử Thời Gian', author: 'Stephen Hawking', sales: 72, stock: 15, image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=100' },
 ];
 
 const StatCard = ({ title, value, icon, color, trend, isUp }) => (
-  <Card sx={{
-    borderRadius: 5,
-    boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    '&:hover': {
-      transform: 'translateY(-5px)',
-      boxShadow: '0 8px 30px 0 rgba(0,0,0,0.1)'
-    }
-  }}>
-    <CardContent sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Avatar sx={{ bgcolor: `${color}15`, color: color, borderRadius: 3, width: 48, height: 48 }}>
-          {icon}
-        </Avatar>
-        <Box sx={{ textAlign: 'right' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', color: isUp ? 'success.main' : 'error.main' }}>
-            {isUp ? <SalesIcon fontSize="small" sx={{ mr: 0.5 }} /> : <TrendingDownIcon fontSize="small" sx={{ mr: 0.5 }} />}
-            <Typography variant="body2" sx={{ fontWeight: 700 }}>{trend}</Typography>
-          </Box>
-          <Typography variant="caption" color="text.secondary">so với tháng trước</Typography>
-        </Box>
+  <Paper
+    elevation={0}
+    sx={{
+      p: 3,
+      borderRadius: 4,
+      bgcolor: 'white',
+      border: '1px solid',
+      borderColor: 'divider',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 12px 24px -10px rgba(0,0,0,0.1)',
+        borderColor: color
+      }
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+      <Avatar
+        sx={{
+          bgcolor: `${color}15`,
+          color: color,
+          borderRadius: 2.5,
+          width: 44,
+          height: 44,
+          fontSize: '1.25rem'
+        }}
+      >
+        {icon}
+      </Avatar>
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        px: 1,
+        py: 0.5,
+        borderRadius: 1.5,
+        bgcolor: isUp ? 'success.light' : 'error.light',
+        color: isUp ? 'success.dark' : 'error.dark',
+        opacity: 0.8
+      }}>
+        <Typography variant="caption" sx={{ fontWeight: 700 }}>{trend}</Typography>
       </Box>
-      <Box>
-        <Typography color="text.secondary" variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
-          {title}
-        </Typography>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
-          {value}
-        </Typography>
-      </Box>
-    </CardContent>
-  </Card>
+    </Box>
+    <Box>
+      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 0.5 }}>
+        {title}
+      </Typography>
+      <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
+        {value}
+      </Typography>
+    </Box>
+  </Paper>
 );
 
 const Dashboard = () => {
   const theme = useTheme();
 
   return (
-    <Box sx={{ width: '100%', flex: 1, pb: 4, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>Dashboard</Typography>
-          <Typography variant="body2" color="text.secondary">Chào mừng bạn trở lại! Đây là thống kê mới nhất của hôm nay.</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 900, mb: 0.5, letterSpacing: '-0.03em' }}>
+            Tổng quan hệ thống
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Theo dõi hiệu suất kinh doanh và quản lý dữ liệu hôm nay.
+          </Typography>
         </Box>
-        <IconButton sx={{ bgcolor: 'background.paper', boxShadow: 1 }}>
-          <MoreVertIcon />
-        </IconButton>
+        <Button
+          variant="contained"
+          startIcon={<SalesIcon />}
+          sx={{ borderRadius: 2, px: 3, py: 1, fontWeight: 700 }}
+        >
+          Xuất báo cáo
+        </Button>
       </Box>
 
-      {/* Stats Section */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} lg={3} key={index}>
-            <StatCard {...stat} />
-          </Grid>
-        ))}
-      </Grid>
+      {/* Row 1: Stat Cards */}
+      
+      {/* Row 2: Charts and Top Lists */}
 
-      <Grid container spacing={3}>
-        {/* Main Chart Section */}
-        <Grid item xs={12} lg={8}>
-          <Paper sx={{ p: 3, borderRadius: 5, boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)', height: '100%' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>Phân tích doanh thu</Typography>
-              <Chip label="2024" size="small" variant="outlined" sx={{ borderRadius: 1 }} />
-            </Box>
-            <Box sx={{ height: 350, width: '100%' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData}>
-                  <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.2} />
-                      <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: theme.palette.text.secondary, fontSize: 12 }}
-                    dy={10}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: theme.palette.text.secondary, fontSize: 12 }}
-                    tickFormatter={(value) => `${value}`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: '12px',
-                      border: 'none',
-                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke={theme.palette.primary.main}
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorRevenue)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Top Books Section */}
-        <Grid item xs={12} lg={4}>
-          <Paper sx={{ p: 3, borderRadius: 5, boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)', height: '100%' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Sách bán chạy</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-              {topBooks.map((book, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar src={book.image} variant="rounded" sx={{ width: 60, height: 60, borderRadius: 2 }} />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{book.title}</Typography>
-                    <Typography variant="caption" color="text.secondary">{book.author}</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                      <LinearProgress
-                        variant="determinate"
-                        value={(book.sales / 150) * 100}
-                        sx={{ flex: 1, height: 6, borderRadius: 3, bgcolor: '#F3F4F6' }}
-                      />
-                      <Typography variant="caption" sx={{ ml: 1, fontWeight: 700 }}>{book.sales}</Typography>
-                    </Box>
-                  </Box>
-                </Box>
+      {/* Row 3: Full-width Recent Orders Table */}
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: 4,
+          border: '1px solid',
+          borderColor: 'divider',
+          overflow: 'hidden'
+        }}
+      >
+        <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" sx={{ fontWeight: 800 }}>Đơn hàng gần đây</Typography>
+          <Button variant="outlined" size="small" sx={{ borderRadius: 2 }}>Toàn bộ đơn hàng</Button>
+        </Box>
+        <TableContainer>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead sx={{ bgcolor: '#f9fafb' }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 700, color: 'text.secondary', borderBottom: 'none' }}>ID ĐƠN HÀNG</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: 'text.secondary', borderBottom: 'none' }}>KHÁCH HÀNG</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: 'text.secondary', borderBottom: 'none' }}>SỐ TIỀN</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: 'text.secondary', borderBottom: 'none' }}>THỜI GIAN</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: 'text.secondary', borderBottom: 'none' }}>TRẠNG THÁI</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {recentOrders.map((order) => (
+                <TableRow key={order.id} hover sx={{ '&:last-child td': { border: 0 } }}>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>{order.id}</TableCell>
+                  <TableCell sx={{ fontWeight: 500 }}>{order.customer}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{order.amount}</TableCell>
+                  <TableCell color="text.secondary">{order.date}</TableCell>
+                  <TableCell>
+                    <StatusChip status={order.status} />
+                  </TableCell>
+                </TableRow>
               ))}
-            </Box>
-            <Button fullWidth variant="outlined" sx={{ mt: 4, borderRadius: 3 }}>
-              Xem tất cả sản phẩm
-            </Button>
-          </Paper>
-        </Grid>
-
-        {/* Recent Orders Section */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 0, borderRadius: 5, boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-            <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>Đơn hàng gần đây</Typography>
-              <Button size="small">Xem tất cả</Button>
-            </Box>
-            <TableContainer>
-              <Table sx={{ minWidth: 650 }}>
-                <TableHead sx={{ bgcolor: '#F9FAFB' }}>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700, color: 'text.secondary' }}>ID Đơn hàng</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: 'text.secondary' }}>Khách hàng</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: 'text.secondary' }}>Số tiền</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: 'text.secondary' }}>Thời gian</TableCell>
-                    <TableCell sx={{ fontWeight: 700, color: 'text.secondary' }}>Trạng thái</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {recentOrders.map((order) => (
-                    <TableRow key={order.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell sx={{ fontWeight: 600 }}>{order.id}</TableCell>
-                      <TableCell>{order.customer}</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>{order.amount}</TableCell>
-                      <TableCell color="text.secondary">{order.date}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={order.status}
-                          size="small"
-                          icon={<FiberManualRecordIcon sx={{ fontSize: '10px !important' }} />}
-                          sx={{
-                            borderRadius: '6px',
-                            fontWeight: 700,
-                            bgcolor:
-                              order.status === 'Completed' ? '#DEF7EC' :
-                                order.status === 'Pending' ? '#FEF3C7' :
-                                  order.status === 'Shipping' ? '#E1EFFE' : '#FDE8E8',
-                            color:
-                              order.status === 'Completed' ? '#03543F' :
-                                order.status === 'Pending' ? '#92400E' :
-                                  order.status === 'Shipping' ? '#1E429F' : '#9B1C1C',
-                            '& .MuiChip-icon': { color: 'inherit' }
-                          }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
-      </Grid>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </Box>
+  );
+};
+
+// Sub-components for cleaner code
+const SelectDate = () => (
+  <Box sx={{ display: 'flex', gap: 1 }}>
+    <Chip label="Theo tuần" size="small" clickable variant="outlined" sx={{ borderRadius: 1.5, fontWeight: 600 }} />
+    <Chip label="Theo tháng" size="small" clickable color="primary" sx={{ borderRadius: 1.5, fontWeight: 600 }} />
+  </Box>
+);
+
+const StatusChip = ({ status }) => {
+  const getStyles = () => {
+    switch (status) {
+      case 'Hoàn thành': return { color: '#059669', bg: '#ecfdf5', label: 'Hoàn thành' };
+      case 'Chờ xử lý': return { color: '#d97706', bg: '#fffbeb', label: 'Chờ xử lý' };
+      case 'Đang giao': return { color: '#2563eb', bg: '#eff6ff', label: 'Đang giao' };
+      case 'Đã hủy': return { color: '#dc2626', bg: '#fef2f2', label: 'Đã hủy' };
+      default: return { color: '#64748b', bg: '#f8fafc', label: status };
+    }
+  };
+  const style = getStyles();
+  return (
+    <Chip
+      label={style.label}
+      size="small"
+      sx={{
+        bgcolor: style.bg,
+        color: style.color,
+        fontWeight: 800,
+        borderRadius: 1.5,
+        fontSize: '0.75rem'
+      }}
+    />
   );
 };
 

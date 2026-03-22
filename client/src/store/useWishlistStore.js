@@ -27,7 +27,7 @@ const useWishlistStore = create((set, get) => ({
         set({ wishlist: wishlist.filter((item) => item._id !== book._id) });
       } else {
         await wishlistService.addToWishlist(book._id);
-        set({ wishlist: [...wishlist, book] });
+        set({ wishlist: [...wishlist, { _id: book._id }] });
       }
       return !isInWishlist; // Returns the new state
     } catch (error) {

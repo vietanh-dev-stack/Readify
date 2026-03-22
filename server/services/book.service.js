@@ -33,11 +33,13 @@ const bookService = {
                     throw new ApiError(StatusCodes.NOT_FOUND, 'Series not found')
                 }
             }
-            const authors = await Author.find({ _id: { $in: data.authorIds } })
-            if (authors.length !== data.authorIds.length) {
+            const authorIds = Array.isArray(data.authorIds) ? data.authorIds : [data.authorIds]
+            const authors = await Author.find({ _id: { $in: authorIds } })
+            if (authors.length !== authorIds.length) {
                 throw new ApiError(
                     StatusCodes.NOT_FOUND, 'One or more authors not found')
             }
+            data.authorIds = authorIds
 
             const existedPublisher = await Publisher.findById(data.publisherId)
             if (!existedPublisher) {
@@ -147,13 +149,14 @@ const bookService = {
             }
 
             if (data.authorIds !== undefined) {
-                const authors = await Author.find({ _id: { $in: data.authorIds } })
-                if (authors.length !== data.authorIds.length) {
+                const authorIds = Array.isArray(data.authorIds) ? data.authorIds : [data.authorIds]
+                const authors = await Author.find({ _id: { $in: authorIds } })
+                if (authors.length !== authorIds.length) {
                     throw new ApiError(
                         StatusCodes.NOT_FOUND, 'One or more authors not found'
                     )
                 }
-                book.authorIds = data.authorIds
+                book.authorIds = authorIds
             }
 
             if (data.publisherId !== undefined) {

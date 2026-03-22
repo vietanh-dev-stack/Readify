@@ -10,23 +10,6 @@ import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import { fetchBookById } from '../../services/book.service';
 import useCartStore from '../../store/useCartStore';
 
-const mockBook = {
-  id: 1,
-  title: 'The Great Gatsby',
-  author: 'F. Scott Fitzgerald',
-  price: 10.99,
-  oldPrice: 14.99,
-  rating: 4.8,
-  reviews: 1245,
-  description: 'A true classic of twentieth-century literature, this edition has been updated to include a fascinating introduction and additional background material. Set in the Jazz Age on Long Island, the novel depicts narrator Nick Carraway\'s interactions with mysterious millionaire Jay Gatsby and Gatsby\'s obsession to reunite with his former lover, Daisy Buchanan.',
-  cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800',
-  category: 'Classic Fiction',
-  isbn: '978-0743273565',
-  pages: 180,
-  publisher: 'Scribner',
-  stock: 12
-};
-
 const Detail = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);

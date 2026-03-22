@@ -15,13 +15,20 @@ const BookCard = ({ book }) => {
   const { isAuthenticated } = useAuth();
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  
-  const isFavorite = wishlist.some((item) => item._id === book._id || item.id === book.id);
 
-  // Mocking discount for UI purposes if not present
-  const discountRate = book.discountRate || (Math.random() > 0.5 ? Math.floor(Math.random() * 30) + 10 : 0);
-  const oldPrice = book.price || 150000;
-  const currentPrice = discountRate > 0 ? oldPrice * (1 - discountRate / 100) : oldPrice;
+  const getId = (obj) => String(obj?._id || obj?.id);
+
+  const isFavorite = wishlist.some(
+    (item) => getId(item) === getId(book)
+  );
+
+  const oldPrice = book.price || 0;
+  const currentPrice = book.discountPrice > 0 ? book.discountPrice : oldPrice;
+
+  const discountRate =
+    book.discountPrice > 0 && book.price > 0
+      ? Math.round(((book.price - book.discountPrice) / book.price) * 100)
+      : 0;
 
   const handleToggleWishlist = async (e) => {
     e.preventDefault();
@@ -57,12 +64,12 @@ const BookCard = ({ book }) => {
       toast.error('Vui lòng đăng nhập để mua hàng!');
       return;
     }
-    
+
     if (isAddingToCart) return;
 
     setIsAddingToCart(true);
     try {
-      await addToCart({ bookId: book._id || book.id, quantity: 1, price: currentPrice });
+      await addToCart(book._id || book.id, 1, book);
       toast.success('Đã thêm vào giỏ hàng');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
@@ -72,13 +79,13 @@ const BookCard = ({ book }) => {
   };
 
   return (
-    <Card 
+    <Card
       component={Link}
       to={`/book/${book._id || book.id}`}
-      sx={{ 
+      sx={{
         textDecoration: 'none',
-        height: '100%', 
-        display: 'flex', 
+        height: '100%',
+        display: 'flex',
         flexDirection: 'column',
         position: 'relative',
         borderRadius: 3,
@@ -103,10 +110,10 @@ const BookCard = ({ book }) => {
     >
       {/* Image Section */}
       <Box sx={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', bgcolor: 'grey.50' }}>
-        <CardMedia 
+        <CardMedia
           className="book-cover"
-          component="img" 
-          image={book.coverImage || book.cover || 'https://via.placeholder.com/300x400?text=No+Cover'} 
+          component="img"
+          image={book.coverImage || book.cover || 'https://via.placeholder.com/300x400?text=No+Cover'}
           alt={book.title}
           sx={{
             width: '100%',
@@ -115,13 +122,13 @@ const BookCard = ({ book }) => {
             transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         />
-        
+
         {/* Discount Badge */}
         {discountRate > 0 && (
-          <Box sx={{ 
-            position: 'absolute', top: 12, right: 12, 
-            bgcolor: '#ef4444', color: '#fff', 
-            px: 1, py: 0.5, borderRadius: 1.5, 
+          <Box sx={{
+            position: 'absolute', top: 12, right: 12,
+            bgcolor: '#ef4444', color: '#fff',
+            px: 1, py: 0.5, borderRadius: 1.5,
             fontWeight: 800, fontSize: '0.75rem',
             boxShadow: '0 4px 10px rgba(239, 68, 68, 0.4)',
             zIndex: 10
@@ -158,10 +165,10 @@ const BookCard = ({ book }) => {
         </Tooltip>
 
         {/* Add to Cart Overlay */}
-        <Box 
+        <Box
           className="cart-overlay"
-          sx={{ 
-            position: 'absolute', bottom: 0, left: 0, right: 0, p: 2, 
+          sx={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, p: 2,
             transform: 'translateY(100%)', opacity: 0,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
@@ -169,14 +176,14 @@ const BookCard = ({ book }) => {
             zIndex: 5, height: '50%'
           }}
         >
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             fullWidth
             startIcon={<ShoppingCartOutlinedIcon />}
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            sx={{ 
-              bgcolor: '#2563eb', fontWeight: 700, borderRadius: 2, 
+            sx={{
+              bgcolor: '#2563eb', fontWeight: 700, borderRadius: 2,
               textTransform: 'none', py: 1,
               boxShadow: '0 4px 10px rgba(37, 99, 235, 0.4)',
               '&:hover': { bgcolor: '#1d4ed8' }
@@ -189,14 +196,14 @@ const BookCard = ({ book }) => {
 
       {/* Content Section */}
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2, pt: 2.5 }}>
-        
+
         {/* Title */}
-        <Typography 
-          variant="subtitle1" 
-          component="h3" 
-          sx={{ 
-            fontWeight: 700, 
-            mb: 0.5, 
+        <Typography
+          variant="subtitle1"
+          component="h3"
+          sx={{
+            fontWeight: 700,
+            mb: 0.5,
             lineHeight: 1.4,
             color: '#1e293b',
             display: '-webkit-box',
@@ -215,7 +222,7 @@ const BookCard = ({ book }) => {
         <Typography variant="body2" sx={{ color: '#64748b', mb: 1, fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {book.authorIds?.map(author => author.name).join(', ') || book.author || 'Tác giả chưa rõ'}
         </Typography>
-        
+
         {/* Rating */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
           <Rating value={book.rating || 4.5} precision={0.5} size="small" readOnly sx={{ color: '#fbbf24', fontSize: '1rem' }} />
@@ -228,7 +235,7 @@ const BookCard = ({ book }) => {
           <Typography variant="h6" sx={{ fontWeight: 800, color: '#ef4444', lineHeight: 1 }}>
             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentPrice)}
           </Typography>
-          
+
           {discountRate > 0 && (
             <Typography variant="body2" sx={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 500, lineHeight: 1.2 }}>
               {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(oldPrice)}

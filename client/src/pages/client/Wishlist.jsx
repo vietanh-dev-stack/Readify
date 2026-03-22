@@ -84,7 +84,7 @@ const Wishlist = () => {
       <Grid container spacing={2}>
         {wishlist.map((book) => (
           <Grid item key={book._id} xs={6} sm={4} md={3} lg={2}>
-            <BookCard book={book} />
+            <BookCard book={book} variant="compact" />
           </Grid>
         ))}
       </Grid>
