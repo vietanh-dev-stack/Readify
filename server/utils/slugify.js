@@ -1,12 +1,15 @@
 const slugify = (text = '') => {
   return text
     .toString()
+    .normalize('NFD') // tách dấu ra khỏi chữ
+    .replace(/[\u0300-\u036f]/g, '') // xoá dấu
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '') // remove special chars
-    .replace(/\s+/g, '-')        // spaces -> hyphen
-    .replace(/-+/g, '-')         // multiple hyphens -> one
-    .replace(/^-+|-+$/g, '') // remove - at start & end
+    .replace(/đ/g, 'd') // riêng chữ đ
+    .replace(/[^a-z0-9\s-]/g, '') 
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
 }
 
 export default slugify

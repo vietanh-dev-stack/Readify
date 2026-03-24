@@ -11,6 +11,7 @@ import cartRoutes from './v1/cart.route.js'
 import userRoutes from './v1/user.route.js'
 import orderRoutes from './v1/order.route.js'
 import addressRoutes from './v1/address.route.js'
+import blogRoutes from './v1/blog.route.js'
 
 const Router = express.Router()
 
@@ -30,5 +31,6 @@ Router.use('/cart', cartRoutes)
 Router.use('/user', userRoutes)
 Router.use('/order', orderRoutes)
 Router.use('/address', addressRoutes)
+Router.use('/blog', blogRoutes)
 
 export default Router
