@@ -81,13 +81,22 @@ const Wishlist = () => {
         </Typography>
       </Box>
 
-      <Grid container spacing={2}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(2, 1fr)',
+            sm: 'repeat(3, 1fr)',
+            md: 'repeat(4, 1fr)',
+            lg: 'repeat(5, 1fr)'
+          },
+          gap: 3
+        }}
+      >
         {wishlist.map((book) => (
-          <Grid item key={book._id} xs={6} sm={4} md={3} lg={2}>
-            <BookCard book={book} variant="compact" />
-          </Grid>
+          <BookCard key={book._id} book={book} />
         ))}
-      </Grid>
+      </Box>
     </Container>
   );
 };

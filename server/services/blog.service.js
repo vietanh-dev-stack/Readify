@@ -39,7 +39,7 @@ const blogService = {
 
     getBlog: async () => {
         try {
-            const blogs = await Blog.find({ status: 'published' }).sort({ createdAt: -1 })
+            const blogs = await Blog.find({ status: 'published' }).sort({ createdAt: -1 }).populate('userId')
             return blogs
         } catch (error) {
             throw error
@@ -109,7 +109,7 @@ const blogService = {
 
     getBlogById: async (bid) => {
         try {
-            const blog = await Blog.findById(bid)
+            const blog = await Blog.findById(bid).populate('userId')
             if (!blog || blog.status === 'draft') {
                 throw new ApiError(StatusCodes.NOT_FOUND, 'Blog not found')
             }

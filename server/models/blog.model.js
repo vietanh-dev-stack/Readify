@@ -19,7 +19,7 @@ const blogSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-blogSchema.index({ slug: 1 }, { unique: true })
+blogSchema.index({ slug: 1 }, { unique: true }) 
 blogSchema.index({ title: 'text', content: 'text' })
 
 export default mongoose.model('blogs', blogSchema)

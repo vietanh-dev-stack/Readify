@@ -38,7 +38,7 @@ const Footer = () => {
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <Typography variant="body2" sx={{ color: '#9CA3AF' }}>📍 Lô E2a-7, Đường D1, TP Thủ Đức, TP Hồ Chí Minh</Typography>
+              <Typography variant="body2" sx={{ color: '#9CA3AF' }}>📍 123 Phố Sách, Quận 1, Xa Song Ma, TP Son La</Typography>
               <Typography variant="body2" sx={{ color: '#9CA3AF' }}>📞 Hotline: 1900 1234</Typography>
               <Typography variant="body2" sx={{ color: '#9CA3AF' }}>✉️ Email: support@readify.vn</Typography>
             </Box>

@@ -225,7 +225,7 @@ const BookCard = ({ book }) => {
 
         {/* Rating */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-          <Rating value={book.rating || 4.5} precision={0.5} size="small" readOnly sx={{ color: '#fbbf24', fontSize: '1rem' }} />
+          <Rating value={book.rating} precision={0.5} size="small" readOnly sx={{ color: '#fbbf24', fontSize: '1rem' }} />
           <Typography variant="caption" sx={{ ml: 1, color: '#94a3b8', fontWeight: 500 }}>
             ({book.reviews || Math.floor(Math.random() * 200) + 12})
           </Typography>

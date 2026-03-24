@@ -34,7 +34,7 @@ const blogPosts = [
 
 const BlogSection = () => {
   return (
-    <Box sx={{ py: 10, background: '#f3f4f6' }}>
+    <Box sx={{ py: 10}}>
       <Container maxWidth="lg">
 
         {/* Header giống 100% hình */}

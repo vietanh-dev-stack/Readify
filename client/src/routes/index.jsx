@@ -6,6 +6,7 @@ import Detail from '../pages/book/Detail';
 import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
 import Wishlist from '../pages/client/Wishlist';
+import Blog from '../pages/blog/Blog';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -17,6 +18,7 @@ import CategoryManagement from '../pages/admin/CategoryManagement';
 import AuthorManagement from '../pages/admin/AuthorManagement';
 import PublisherManagement from '../pages/admin/PublisherManagement';
 import SeriesManagement from '../pages/admin/SeriesManagement';
+import Contact from '../pages/contact/Contact';
 
 const AppRoutes = () => {
   return (
@@ -36,6 +38,8 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="wishlist" element={<Wishlist />} />
+        <Route path='/blog' element={<Blog/>}/>
+        <Route path='/contact' element={<Contact/>}/>
       </Route>
 
       {/* admin layout */}

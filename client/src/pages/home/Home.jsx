@@ -68,7 +68,6 @@ const Home = () => {
   // Client-side distribution
   const newArrivals = [...books].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 10);
   const bestSellers = [...books].reverse().slice(0, 10); 
-  const recommended = [...books].slice(4, 14);
 
   return (
     <Box>

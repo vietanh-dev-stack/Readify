@@ -70,7 +70,7 @@ const Register = () => {
         sx={{
           display: { xs: 'none', md: 'block' },
           backgroundImage: `
-            url(/assets/login.jpg)
+            url(/assets/register.jpg)
           `,
           backgroundSize: 'cover',
           backgroundPosition: 'center'

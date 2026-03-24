@@ -49,21 +49,12 @@ const reviews = [
     rating: 5, 
     tag: "Tâm lý học", 
     content: "Tìm sách theo chủ đề ở đây cực kỳ thú vị so với cách truyền thống??? Đó giờ mình thấy khó nhất là tìm được cuốn sách thực sự 'chạm'. Mình từng bị ngợp giữa hàng ngàn tiêu đề, nhưng giờ đã tìm được bộ sách ưng ý nhờ Readify!" 
-  },
-  { 
-    id: 6, 
-    name: "Đinh Văn Thái Bảo", 
-    date: "Tháng 09, 2024", 
-    avatar: "https://i.pravatar.cc/150?img=16", 
-    rating: 5, 
-    tag: "Blockchain & Crypto", 
-    content: "🚀 Cần tìm tài liệu gấp, mình đã chọn Readify. Kho sách phong phú, lớp phân loại rõ ràng để không ảnh hưởng đến việc tìm kiếm. Mình được đội ngũ tư vấn rất kỹ... Hệ thống gợi ý đa dạng, phản hồi nhanh chóng!" 
   }
 ];
 
 const Testimonials = () => {
   return (
-    <Box sx={{ py: 10, background: '#f3f4f6' }}>
+    <Box sx={{ py: 10}}>
       <Container maxWidth="lg">
 
         {/* HEADER */}
