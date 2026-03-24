@@ -13,7 +13,7 @@ const orderService = {
     createOrder: async (userId, data) => {
         const { addressId, paymentMethod, couponCode } = data
 
-        // 1. Get cart
+        // 1. Lấy cart + populate book
         const cart = await Cart.findOne({ userId })
             .populate('items.bookId', 'title')
             .lean()
@@ -32,7 +32,7 @@ const orderService = {
             throw new ApiError(StatusCodes.NOT_FOUND, 'Address not found')
         }
 
-        // 3. Get inventories
+        // 3. Lấy inventory 1 lần
         const bookIds = cart.items.map(i => i.bookId._id)
 
         const inventories = await Inventory.find({
@@ -47,7 +47,7 @@ const orderService = {
         let totalPrice = 0
         const orderItemsData = []
 
-        // 4. Validate stock
+        // 4. Validate stock + build items
         for (let item of cart.items) {
             const inv = inventoryMap.get(item.bookId._id.toString())
 
@@ -74,7 +74,7 @@ const orderService = {
             })
         }
 
-        // COUPON
+        // coupon
         let discount = 0
 
         if (couponCode) {
@@ -111,13 +111,13 @@ const orderService = {
 
         const finalPrice = totalPrice - discount
 
-        // CREATE ORDER
         const order = await Order.create({
             userId,
             totalPrice,
             discount,
             finalPrice,
             paymentMethod,
+            paymentStatus: 'pending',
             shippingAddress: {
                 fullAddress: address.fullAddress,
                 province: address.province,
@@ -128,7 +128,7 @@ const orderService = {
             }
         })
 
-        // CREATE ORDER ITEMS
+        // create order items
         const orderItems = orderItemsData.map(item => ({
             ...item,
             orderId: order._id
@@ -136,13 +136,10 @@ const orderService = {
 
         await OrderItem.insertMany(orderItems)
 
-        // UPDATE INVENTORY
+        // update inventory
         const bulkOps = cart.items.map(item => ({
             updateOne: {
-                filter: {
-                    bookId: item.bookId._id,
-                    quantity: { $gte: item.quantity } // chống oversell
-                },
+                filter: { bookId: item.bookId._id },
                 update: {
                     $inc: { reserved: item.quantity }
                 }
@@ -151,7 +148,7 @@ const orderService = {
 
         await Inventory.bulkWrite(bulkOps)
 
-        // CLEAR CART
+        // clear cart
         await Cart.updateOne(
             { userId },
             { $set: { items: [] } }
@@ -163,19 +160,20 @@ const orderService = {
     getOrder: async (userId, page = 1, limit = 10) => {
         const skip = (page - 1) * limit
 
-        const orders = await Order.find({ userId })
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-
-        const total = await Order.countDocuments({ userId })
+        const [orders, total] = await Promise.all([
+            Order.find({ userId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(Number(limit)),
+            Order.countDocuments({ userId })
+        ])
 
         return {
             data: orders,
             pagination: {
                 total,
-                page,
-                limit,
+                page: Number(page),
+                limit: Number(limit),
                 totalPages: Math.ceil(total / limit)
             }
         }
@@ -195,7 +193,7 @@ const orderService = {
         const items = await OrderItem.find({ orderId })
 
         return {
-            ...order.toObject(),
+            order,
             items
         }
     },
@@ -211,13 +209,13 @@ const orderService = {
             throw new ApiError(StatusCodes.FORBIDDEN, 'No permission')
         }
 
-        if (!['pending', 'paid'].includes(order.status)) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, 'Order cannot be cancelled')
+        if (order.status !== 'pending') {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Cannot cancel order')
         }
 
+        // trả lại inventory
         const items = await OrderItem.find({ orderId })
 
-        // rollback inventory
         const bulkOps = items.map(item => ({
             updateOne: {
                 filter: { bookId: item.bookId },
@@ -230,6 +228,56 @@ const orderService = {
         await Inventory.bulkWrite(bulkOps)
 
         order.status = 'cancelled'
+        order.paymentStatus = 'failed'
+
+        await order.save()
+
+        return order
+    },
+
+    // payment success
+    markOrderPaid: async (orderId, paymentRef) => {
+        const order = await Order.findById(orderId)
+
+        if (!order) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Order not found')
+        }
+
+        order.paymentStatus = 'paid'
+        order.paymentRef = paymentRef
+        order.status = 'paid'
+        order.paidAt = new Date()
+
+        await order.save()
+
+        return order
+    },
+
+    // payment failed
+    markOrderFailed: async (orderId) => {
+        const order = await Order.findById(orderId)
+
+        if (!order) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Order not found')
+        }
+
+        // trả lại inventory
+        const items = await OrderItem.find({ orderId })
+
+        const bulkOps = items.map(item => ({
+            updateOne: {
+                filter: { bookId: item.bookId },
+                update: {
+                    $inc: { reserved: -item.quantity }
+                }
+            }
+        }))
+
+        await Inventory.bulkWrite(bulkOps)
+
+        order.paymentStatus = 'failed'
+        order.status = 'cancelled'
+
         await order.save()
 
         return order

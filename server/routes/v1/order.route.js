@@ -10,7 +10,7 @@ router.post(
     authMiddleware.isAuthorized,
     orderValidation.create,
     orderController.createOrder
-)   
+)
 
 router.get(
     '/',
@@ -18,14 +18,16 @@ router.get(
     orderController.getOrder
 )
 
-router.get('/:orderId',
+router.get(
+    '/update/:orderId',
     authMiddleware.isAuthorized,
     orderController.getOrderById
 )
 
-router.patch('/cancel/:orderId',
+router.patch(
+    '/delete/:orderId/cancel',
     authMiddleware.isAuthorized,
     orderController.cancelOrder
-)   
+)
 
 export default router

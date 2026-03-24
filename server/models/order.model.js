@@ -24,7 +24,13 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum: ['cod', 'momo', 'vnpay'],
         default: 'cod'
-    }
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'paid', 'failed'],
+        default: 'pending'
+    },
+    paymentRef: String
 }, { timestamps: true })
 
 orderSchema.index({ userId: 1, status: 1 })

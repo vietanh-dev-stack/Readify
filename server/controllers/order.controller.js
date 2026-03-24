@@ -1,4 +1,6 @@
 import { StatusCodes } from "http-status-codes"
+import mongoose from "mongoose"
+import ApiError from "../utils/apiError.js"
 import orderService from "../services/order.service.js"
 
 const orderController = {
@@ -9,7 +11,10 @@ const orderController = {
 
             const result = await orderService.createOrder(userId, req.body)
 
-            return res.status(StatusCodes.CREATED).json(result)
+            return res.status(StatusCodes.CREATED).json({
+                message: "Create order successfully",
+                data: result
+            })
         } catch (error) {
             next(error)
         }
@@ -24,7 +29,10 @@ const orderController = {
 
             const result = await orderService.getOrder(userId, page, limit)
 
-            return res.status(StatusCodes.OK).json(result)
+            return res.status(StatusCodes.OK).json({
+                message: "Get orders successfully",
+                ...result
+            })
         } catch (error) {
             next(error)
         }
@@ -35,9 +43,16 @@ const orderController = {
             const userId = req.jwtDecoded._id
             const { orderId } = req.params
 
+            if (!mongoose.Types.ObjectId.isValid(orderId)) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid orderId")
+            }
+
             const result = await orderService.getOrderById(userId, orderId)
 
-            return res.status(StatusCodes.OK).json(result)
+            return res.status(StatusCodes.OK).json({
+                message: "Get order detail successfully",
+                data: result
+            })
         } catch (error) {
             next(error)
         }
@@ -47,6 +62,10 @@ const orderController = {
         try {
             const userId = req.jwtDecoded._id
             const { orderId } = req.params
+
+            if (!mongoose.Types.ObjectId.isValid(orderId)) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid orderId")
+            }
 
             const result = await orderService.cancelOrder(userId, orderId)
 
