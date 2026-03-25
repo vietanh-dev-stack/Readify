@@ -7,6 +7,7 @@ import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
 import Wishlist from '../pages/client/Wishlist';
 import Blog from '../pages/blog/Blog';
+import Contact from '../pages/contact/Contact';
 import MainLayout from '../components/layout/MainLayout';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -18,7 +19,8 @@ import CategoryManagement from '../pages/admin/CategoryManagement';
 import AuthorManagement from '../pages/admin/AuthorManagement';
 import PublisherManagement from '../pages/admin/PublisherManagement';
 import SeriesManagement from '../pages/admin/SeriesManagement';
-import Contact from '../pages/contact/Contact';
+import BlogManagement from '../pages/admin/BlogManagement';
+import BlogDetail from '../pages/blog/BlogDetail';
 
 const AppRoutes = () => {
   return (
@@ -39,6 +41,7 @@ const AppRoutes = () => {
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path='/blog' element={<Blog/>}/>
+        <Route path='blog/:id' element={<BlogDetail/>}/>
         <Route path='/contact' element={<Contact/>}/>
       </Route>
 
@@ -58,6 +61,7 @@ const AppRoutes = () => {
         <Route path="authors" element={<AuthorManagement />} />
         <Route path="publishers" element={<PublisherManagement />} />
         <Route path="series" element={<SeriesManagement />} />
+        <Route path='blogs' element={<BlogManagement/>}/>
       </Route>
 
       {/* fallback */}

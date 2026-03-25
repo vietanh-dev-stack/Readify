@@ -8,6 +8,7 @@ const blogController = {
             const userId = req.jwtDecoded._id
             const data = {...req.body, image: req.file}
             const result = await blogService.createBlog(userId, data)
+            console.log('File: ', req.file);
             return res.status(StatusCodes.CREATED).json(result)
         } catch (error) {
             next(error)
@@ -17,6 +18,15 @@ const blogController = {
     getBlog: async (req, res, next) => {
         try {
             const result = await blogService.getBlog()
+            return res.status(StatusCodes.OK).json(result)
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getBlogAdmin: async (req, res, next) => {
+        try {
+            const result = await blogService.getBlogAdmin()
             return res.status(StatusCodes.OK).json(result)
         } catch (error) {
             next(error)

@@ -9,8 +9,9 @@ const router = express.Router()
 
 router.post('/create', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogValidation.create, blogController.createBlog)
 router.get('/', blogController.getBlog)
+router.get('/admin', authMiddleware.isAuthorized, blogController.getBlogAdmin)
 router.put('/update/:bid', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogController.updateBlog)
 router.delete('/delete/:bid', authMiddleware.isAuthorized, blogController.deleteBlog)
-router.get('/blog/:bid', blogController.getBlogById)
+router.get('/:bid', blogController.getBlogById)
 
 export default router

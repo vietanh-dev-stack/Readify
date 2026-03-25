@@ -10,7 +10,13 @@ const blogService = {
         try {
             const { title, content, image, status } = data
 
-            const slug = slugify(data.title)
+            let baseSlug = slugify(title)
+            let slug = baseSlug
+            let count = 1
+
+            while (await Blog.findOne({ slug })) {
+                slug = `${baseSlug}-${count++}`
+            }
 
             let thumbnail = null
             if (image) {
@@ -46,6 +52,15 @@ const blogService = {
         }
     },
 
+    getBlogAdmin: async () => {
+        try {
+            const blogs = await Blog.find().sort({ createdAt: -1 }).populate('userId')
+            return blogs
+        } catch (error) {
+            throw error
+        }
+    },
+
     updateBlog: async (bid, userId, data) => {
         try {
             const blog = await Blog.findById(bid)
@@ -71,6 +86,10 @@ const blogService = {
                 blog.slug = slug
             }
 
+            if (data.content !== undefined) {
+                blog.content = data.content
+            }
+
             if (data.image) {
                 const uploadResult = await cloudinaryProvider.uploadImageBuffer(
                     data.image.buffer,
@@ -79,7 +98,7 @@ const blogService = {
                 blog.thumbnail = uploadResult.url
             }
 
-            if(data.status !== undefined) {
+            if (data.status !== undefined) {
                 blog.status = data.status
             }
 

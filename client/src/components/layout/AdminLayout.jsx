@@ -33,6 +33,7 @@ const AdminLayout = () => {
     { text: 'Authors', icon: <AuthorIcon />, path: '/admin/authors' },
     { text: 'Publishers', icon: <PublisherIcon />, path: '/admin/publishers' },
     { text: 'Series', icon: <SeriesIcon />, path: '/admin/series' },
+    {text: 'Blogs', icon: <SeriesIcon/>, path: '/admin/blogs'}
   ];
 
   const drawer = (
