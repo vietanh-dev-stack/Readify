@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.post('/add-to-cart', authMiddleware.isAuthorized, cartValidation.create, cartController.addToCart)
 router.get('/', authMiddleware.isAuthorized, cartController.getCart)
-router.put('/update/:bookId', authMiddleware.isAuthorized, cartValidation.update, cartController.updateCartItem)
-router.delete('/delete/:bookId', authMiddleware.isAuthorized, cartController.removeCartItem)
+router.put('/:bookId', authMiddleware.isAuthorized, cartValidation.update, cartController.updateCartItem)
+router.delete('/:bookId', authMiddleware.isAuthorized, cartController.removeCartItem)
 
 export default router

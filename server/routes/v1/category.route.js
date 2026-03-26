@@ -6,9 +6,9 @@ import categoryController from '../../controllers/category.controller.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, categoryValidation.create, categoryController.createCategory)
+router.post('/', authMiddleware.isAuthorized, categoryValidation.create, categoryController.createCategory)
 router.get('/', categoryController.getCategory)
-router.put('/update/:cateId', authMiddleware.isAuthorized, categoryValidation.update, categoryController.updateCategory)
-router.delete('/delete/:cateId', authMiddleware.isAuthorized, categoryController.deleteCategory)
+router.put('/:cateId', authMiddleware.isAuthorized, categoryValidation.update, categoryController.updateCategory)
+router.delete('/:cateId', authMiddleware.isAuthorized, categoryController.deleteCategory)
 
 export default router

@@ -5,14 +5,14 @@ export const fetchCategories = async () => {
 }
 
 export const createCategory = async (data) => {
-    return await axiosCustomize.post('/cate/create', data)
+    return await axiosCustomize.post('/cate', data)
 }
 
 export const updateCategory = async (id, data) => {
-    return await axiosCustomize.put(`/cate/update/${id}`, data)
+    return await axiosCustomize.put(`/cate/${id}`, data)
 }
 
 export const deleteCategory = async (id) => {
-    return await axiosCustomize.delete(`/cate/delete/${id}`)
+    return await axiosCustomize.delete(`/cate/${id}`)
 }
-
+

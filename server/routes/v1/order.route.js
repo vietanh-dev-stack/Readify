@@ -6,7 +6,7 @@ import orderValidation from '../../validations/order.validation.js'
 const router = express.Router()
 
 router.post(
-    '/create',
+    '/',
     authMiddleware.isAuthorized,
     orderValidation.create,
     orderController.createOrder
@@ -19,13 +19,13 @@ router.get(
 )
 
 router.get(
-    '/update/:orderId',
+    '/:orderId',
     authMiddleware.isAuthorized,
     orderController.getOrderById
 )
 
 router.patch(
-    '/delete/:orderId/cancel',
+    '/:orderId/cancel',
     authMiddleware.isAuthorized,
     orderController.cancelOrder
 )

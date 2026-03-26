@@ -5,7 +5,7 @@ export const fetchAuthors = async () => {
 }
 
 export const createAuthor = async (data) => {
-    return await axiosCustomize.post('/author/create', data, {
+    return await axiosCustomize.post('/author', data, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -13,7 +13,7 @@ export const createAuthor = async (data) => {
 }
 
 export const updateAuthor = async (id, formData) => {
-    return await axiosCustomize.put(`/author/update/${id}`, formData, {
+    return await axiosCustomize.put(`/author/${id}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -21,7 +21,7 @@ export const updateAuthor = async (id, formData) => {
 }
 
 export const deleteAuthor = async (id) => {
-    return await axiosCustomize.delete(`/author/delete/${id}`)
+    return await axiosCustomize.delete(`/author/${id}`)
 }
 
 export const fetchAuthorById = async (id) => {

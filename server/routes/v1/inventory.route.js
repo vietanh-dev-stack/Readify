@@ -6,8 +6,8 @@ import inventoryController from '../../controllers/inventory.controller.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, inventoryValidation.create, inventoryController.createInventory)
+router.post('/', authMiddleware.isAuthorized, inventoryValidation.create, inventoryController.createInventory)
 router.get('/', inventoryController.getInventory)
-router.put('/update/:invenId', authMiddleware.isAuthorized, inventoryValidation.update, inventoryController.updateInventory)
+router.put('/:invenId', authMiddleware.isAuthorized, inventoryValidation.update, inventoryController.updateInventory)
 
 export default router

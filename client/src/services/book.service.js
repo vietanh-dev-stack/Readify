@@ -10,19 +10,19 @@ export const fetchBookById = async (id) => {
 }
 
 export const createBook = async (formData) => {
-  return await axiosCustomize.post('/book/create', formData, {
+  return await axiosCustomize.post('/book', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
 
 export const updateBook = async (id, formData) => {
-  return await axiosCustomize.put(`/book/update/${id}`, formData, {
+  return await axiosCustomize.put(`/book/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
 
 export const deleteBook = async (id) => {
-  return await axiosCustomize.delete(`/book/delete/${id}`)
+  return await axiosCustomize.delete(`/book/${id}`)
 }
 
 export const fetchBookQuantity = async (id) => {
@@ -35,9 +35,9 @@ export const fetchInventory = async () => {
 }
 
 export const createInventory = async (data) => {
-  return await axiosCustomize.post('/inventory/create', data)
+  return await axiosCustomize.post('/inventory', data)
 }
 
 export const updateInventory = async (id, data) => {
-  return await axiosCustomize.put(`/inventory/update/${id}`, data)
+  return await axiosCustomize.put(`/inventory/${id}`, data)
 }

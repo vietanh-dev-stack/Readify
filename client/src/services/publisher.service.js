@@ -5,13 +5,13 @@ export const fetchPublishers = async () => {
 }
 
 export const createPublisher = async (data) => {
-    return await axiosCustomize.post('/publisher/create', data)
+    return await axiosCustomize.post('/publisher', data)
 }
 
 export const updatePublisher = async (id, data) => {
-    return await axiosCustomize.put(`/publisher/update/${id}`, data)
+    return await axiosCustomize.put(`/publisher/${id}`, data)
 }
 
 export const deletePublisher = async (id) => {
-    return await axiosCustomize.delete(`/publisher/delete/${id}`)
+    return await axiosCustomize.delete(`/publisher/${id}`)
 }

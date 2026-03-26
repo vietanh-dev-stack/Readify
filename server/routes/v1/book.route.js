@@ -7,10 +7,10 @@ import uploadMiddleware from '../../middlewares/uploadMiddleware.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, uploadMiddleware.uploadBookImages, bookController.createBook)
+router.post('/', authMiddleware.isAuthorized, uploadMiddleware.uploadBookImages, bookController.createBook)
 router.get('/', bookController.getBook)
-router.put('/update/:bId', authMiddleware.isAuthorized, uploadMiddleware.uploadBookImages, bookValidation.update, bookController.updateBook)
-router.delete('/delete/:bId', authMiddleware.isAuthorized, bookController.deleteBook)
+router.put('/:bId', authMiddleware.isAuthorized, uploadMiddleware.uploadBookImages, bookValidation.update, bookController.updateBook)
+router.delete('/:bId', authMiddleware.isAuthorized, bookController.deleteBook)
 router.get('/:bId', bookController.getBookById)
 router.get('/quantity/:bId', bookController.getQuantityByBook)
 

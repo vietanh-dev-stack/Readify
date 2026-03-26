@@ -7,12 +7,12 @@ const wishlistService = {
   },
 
   addToWishlist: async (bookId) => {
-    const response = await axios.post('/wishlist/create', { bookId });
+    const response = await axios.post('/wishlist', { bookId });
     return response.data;
   },
 
   removeFromWishlist: async (bookId) => {
-    const response = await axios.delete(`/wishlist/delete/${bookId}`);
+    const response = await axios.delete(`/wishlist/${bookId}`);
     return response.data;
   }
 };

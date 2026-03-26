@@ -13,13 +13,13 @@ export const fetchBlogById = async (id) => {
 }
 
 export const createBlog = async (data) => {
-    return await axiosCustomize.post('/blog/create', data)
+    return await axiosCustomize.post('/blog', data)
 }
 
 export const uploadBlog = async (id, data) => {
-    return await axiosCustomize.put(`/blog/update/${id}`, data)
+    return await axiosCustomize.put(`/blog/${id}`, data)
 }
 
 export const deleteBlog = async (id) => {
-    return await axiosCustomize.delete(`/blog/delete/${id}`)
+    return await axiosCustomize.delete(`/blog/${id}`)
 }

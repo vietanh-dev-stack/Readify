@@ -6,8 +6,8 @@ import wishlistController from '../../controllers/wishlist.controller.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, wishlistValidation.add, wishlistController.addToWishlist)
+router.post('/', authMiddleware.isAuthorized, wishlistValidation.add, wishlistController.addToWishlist)
 router.get('/', authMiddleware.isAuthorized, wishlistController.getWishlist)
-router.delete('/delete/:bookId', authMiddleware.isAuthorized, wishlistController.removeFromWishlist)
+router.delete('/:bookId', authMiddleware.isAuthorized, wishlistController.removeFromWishlist)
 
 export default router

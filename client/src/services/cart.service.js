@@ -9,9 +9,9 @@ export const getCartItems = async () => {
 };
 
 export const updateCartItem = async (bookId, quantity) => {
-  return await axiosCustomize.put(`/cart/update/${bookId}`, { quantity });
+  return await axiosCustomize.put(`/cart/${bookId}`, { quantity });
 };
 
 export const removeFromCart = async (bookId) => {
-  return await axiosCustomize.delete(`/cart/delete/${bookId}`);
+  return await axiosCustomize.delete(`/cart/${bookId}`);
 };

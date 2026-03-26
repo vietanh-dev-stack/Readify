@@ -7,11 +7,11 @@ import blogValidation from '../../validations/blog.validation.js'
 
 const router = express.Router()
 
-router.post('/create', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogValidation.create, blogController.createBlog)
+router.post('/', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogValidation.create, blogController.createBlog)
 router.get('/', blogController.getBlog)
 router.get('/admin', authMiddleware.isAuthorized, blogController.getBlogAdmin)
-router.put('/update/:bid', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogController.updateBlog)
-router.delete('/delete/:bid', authMiddleware.isAuthorized, blogController.deleteBlog)
+router.put('/:bid', authMiddleware.isAuthorized, uploadMiddleware.upload.single('image'), blogController.updateBlog)
+router.delete('/:bid', authMiddleware.isAuthorized, blogController.deleteBlog)
 router.get('/:bid', blogController.getBlogById)
 
 export default router
