@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, Avatar, Menu, MenuItem, Tooltip, CssBaseline } from '@mui/material';
-import { Menu as MenuIcon, Dashboard as DashboardIcon, People as PeopleIcon, MenuBook as BookIcon, Category as CategoryIcon, Person as AuthorIcon, Business as PublisherIcon, AutoStories as SeriesIcon, Logout as LogoutIcon, Home as HomeIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Dashboard as DashboardIcon, People as PeopleIcon, MenuBook as BookIcon, Category as CategoryIcon, Person as AuthorIcon, Business as PublisherIcon, AutoStories as SeriesIcon, Logout as LogoutIcon, Home as HomeIcon, ReceiptLong as ReceiptLongIcon } from '@mui/icons-material';
 import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -33,6 +33,7 @@ const AdminLayout = () => {
     { text: 'Authors', icon: <AuthorIcon />, path: '/admin/authors' },
     { text: 'Publishers', icon: <PublisherIcon />, path: '/admin/publishers' },
     { text: 'Series', icon: <SeriesIcon />, path: '/admin/series' },
+    { text: 'Orders', icon: <ReceiptLongIcon />, path: '/admin/orders' },
     {text: 'Blogs', icon: <SeriesIcon/>, path: '/admin/blogs'}
   ];
 

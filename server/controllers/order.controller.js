@@ -76,6 +76,64 @@ const orderController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getOrdersForAdmin: async (req, res, next) => {
+        try {
+            const adminId = req.jwtDecoded._id
+            const page = parseInt(req.query.page) || 1
+            const limit = parseInt(req.query.limit) || 10
+
+            const result = await orderService.getOrdersForAdmin(adminId, page, limit, req.query)
+
+            return res.status(StatusCodes.OK).json({
+                message: "Get admin orders successfully",
+                ...result
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getOrderDetailForAdmin: async (req, res, next) => {
+        try {
+            const adminId = req.jwtDecoded._id
+            const { orderId } = req.params
+
+            if (!mongoose.Types.ObjectId.isValid(orderId)) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid orderId")
+            }
+
+            const result = await orderService.getOrderDetailForAdmin(adminId, orderId)
+
+            return res.status(StatusCodes.OK).json({
+                message: "Get admin order detail successfully",
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updateOrderStatusByAdmin: async (req, res, next) => {
+        try {
+            const adminId = req.jwtDecoded._id
+            const { orderId } = req.params
+            const { status } = req.body
+
+            if (!mongoose.Types.ObjectId.isValid(orderId)) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid orderId")
+            }
+
+            const result = await orderService.updateOrderStatusByAdmin(adminId, orderId, status)
+
+            return res.status(StatusCodes.OK).json({
+                message: "Update order status successfully",
+                data: result
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 
 }

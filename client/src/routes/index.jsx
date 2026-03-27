@@ -23,6 +23,7 @@ import PublisherManagement from '../pages/admin/PublisherManagement';
 import SeriesManagement from '../pages/admin/SeriesManagement';
 import BlogManagement from '../pages/admin/BlogManagement';
 import BlogDetail from '../pages/blog/BlogDetail';
+import OrderManagement from '../pages/admin/OrderManagement';
 
 const AppRoutes = () => {
   return (
@@ -66,6 +67,7 @@ const AppRoutes = () => {
         <Route path="authors" element={<AuthorManagement />} />
         <Route path="publishers" element={<PublisherManagement />} />
         <Route path="series" element={<SeriesManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
         <Route path='blogs' element={<BlogManagement/>}/>
       </Route>
 

@@ -132,7 +132,7 @@ const paymentService = {
             throw new ApiError(StatusCodes.NOT_FOUND, 'Order not found')
         }
 
-        if (resultCode === 0) {
+        if (Number(resultCode) === 0) {
             order.paymentStatus = 'paid'
             order.status = 'paid'
             order.paymentRef = transId

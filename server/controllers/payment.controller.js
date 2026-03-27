@@ -1,6 +1,17 @@
 import paymentService from '../services/payment.service.js'
 import Order from '../models/order.model.js'
 
+const buildClientPaymentResultUrl = (status, orderId, message = '') => {
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173'
+    const searchParams = new URLSearchParams()
+
+    if (status) searchParams.set('status', status)
+    if (orderId) searchParams.set('orderId', orderId)
+    if (message) searchParams.set('message', message)
+
+    return `${clientUrl}/payment-result?${searchParams.toString()}`
+}
+
 const paymentController = {
 
     createPayment: async (req, res, next) => {
@@ -29,8 +40,33 @@ const paymentController = {
 
     vnpayReturn: async (req, res, next) => {
         try {
-            await paymentService.verifyVNPayReturn(req.query)
-            res.redirect('/payment-success')
+            const order = await paymentService.verifyVNPayReturn(req.query)
+            const status = order.paymentStatus === 'paid' ? 'success' : 'failed'
+
+            return res.redirect(
+                buildClientPaymentResultUrl(
+                    status,
+                    order._id.toString(),
+                    status === 'success' ? 'Thanh toán VNPay thành công.' : 'Thanh toán VNPay thất bại.'
+                )
+            )
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    momoReturn: async (req, res, next) => {
+        try {
+            const order = await paymentService.verifyMomoWebhook(req.query)
+            const status = order.paymentStatus === 'paid' ? 'success' : 'failed'
+
+            return res.redirect(
+                buildClientPaymentResultUrl(
+                    status,
+                    order._id.toString(),
+                    status === 'success' ? 'Thanh toán MoMo thành công.' : 'Thanh toán MoMo thất bại.'
+                )
+            )
         } catch (error) {
             next(error)
         }

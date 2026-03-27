@@ -2,6 +2,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import {
   Alert,
@@ -17,40 +18,34 @@ import {
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-const getStatusConfig = (status) => {
-  if (status === 'success') {
-    return {
-      title: 'Payment successful',
-      description: 'Your order has been placed successfully. We will process it shortly.',
-      color: 'success',
-      icon: <CheckCircleOutlineIcon color="success" sx={{ fontSize: 72 }} />,
-    };
-  }
-
-  if (status === 'pending') {
-    return {
-      title: 'Payment pending',
-      description: 'Your payment is being processed. Please check again in a few minutes.',
-      color: 'warning',
-      icon: <PendingOutlinedIcon color="warning" sx={{ fontSize: 72 }} />,
-    };
-  }
-
-  return {
-    title: 'Payment not completed',
-    description: 'We could not confirm your payment. Please review your order status or try again.',
-    color: 'error',
-    icon: <ErrorOutlineIcon color="error" sx={{ fontSize: 72 }} />,
-  };
-};
-
 function PaymentResult() {
   const [searchParams] = useSearchParams();
-  const status = (searchParams.get('status') || '').toLowerCase();
+  const rawStatus = (searchParams.get('status') || '').toLowerCase();
   const orderId = searchParams.get('orderId');
   const message = searchParams.get('message');
 
-  const statusConfig = getStatusConfig(status);
+  const normalizedStatus = rawStatus === 'success' ? 'success' : rawStatus || 'failed';
+  const statusConfig =
+    normalizedStatus === 'success' || normalizedStatus === 'paid'
+      ? {
+          title: 'Thanh toán thành công',
+          description: 'Đơn hàng đã được tạo và thanh toán thành công. Hệ thống sẽ xử lý đơn của bạn sớm nhất.',
+          color: 'success',
+          icon: <CheckCircleOutlineIcon color="success" sx={{ fontSize: 72 }} />,
+        }
+      : normalizedStatus === 'pending'
+        ? {
+            title: 'Thanh toán đang chờ xử lý',
+            description: 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại trạng thái đơn hàng sau ít phút.',
+            color: 'warning',
+            icon: <PendingOutlinedIcon color="warning" sx={{ fontSize: 72 }} />,
+          }
+        : {
+            title: 'Thanh toán chưa hoàn tất',
+            description: 'Hệ thống chưa xác nhận được giao dịch. Bạn có thể kiểm tra lại đơn hàng hoặc thực hiện thanh toán lại.',
+            color: 'error',
+            icon: <ErrorOutlineIcon color="error" sx={{ fontSize: 72 }} />,
+          };
 
   return (
     <Container maxWidth="sm" sx={{ py: { xs: 4, md: 8 } }}>
@@ -61,7 +56,7 @@ function PaymentResult() {
 
             <Stack spacing={1} alignItems="center">
               <Chip
-                label={status ? status.toUpperCase() : 'UNKNOWN'}
+                label={normalizedStatus ? normalizedStatus.toUpperCase() : 'UNKNOWN'}
                 color={statusConfig.color}
                 variant="outlined"
               />
@@ -77,17 +72,21 @@ function PaymentResult() {
               <Stack spacing={2} sx={{ width: '100%' }}>
                 {orderId && (
                   <Alert severity="info" sx={{ textAlign: 'left' }}>
-                    <strong>Order ID:</strong> {orderId}
+                    <strong>Mã đơn hàng:</strong> {orderId}
                   </Alert>
                 )}
 
                 {message && (
-                  <Alert severity={status === 'success' ? 'success' : 'warning'} sx={{ textAlign: 'left' }}>
+                  <Alert severity={normalizedStatus === 'success' ? 'success' : normalizedStatus === 'pending' ? 'warning' : 'error'} sx={{ textAlign: 'left' }}>
                     {message}
                   </Alert>
                 )}
               </Stack>
             )}
+
+            <Alert severity={normalizedStatus === 'success' ? 'success' : 'warning'} sx={{ width: '100%', textAlign: 'left' }}>
+              Với đơn hàng online như VNPay/MoMo, trạng thái cuối cùng sẽ được cập nhật sau khi cổng thanh toán redirect về trang này.
+            </Alert>
 
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
@@ -102,7 +101,16 @@ function PaymentResult() {
                 startIcon={<HomeOutlinedIcon />}
                 fullWidth
               >
-                Back to home
+                Về trang chủ
+              </Button>
+              <Button
+                component={Link}
+                to="/profile"
+                variant="outlined"
+                startIcon={<ReceiptLongOutlinedIcon />}
+                fullWidth
+              >
+                Xem đơn hàng
               </Button>
               <Button
                 component={Link}
@@ -111,7 +119,7 @@ function PaymentResult() {
                 startIcon={<ShoppingCartOutlinedIcon />}
                 fullWidth
               >
-                Go to cart
+                Về giỏ hàng
               </Button>
             </Stack>
           </Stack>

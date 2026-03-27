@@ -8,6 +8,8 @@ router.post('/:orderId', authMiddleware.isAuthorized, paymentController.createPa
 
 router.get('/vnpay-return', paymentController.vnpayReturn)
 
+router.get('/momo-return', paymentController.momoReturn)
+
 router.post('/momo-webhook', paymentController.momoWebhook)
 
 export default router

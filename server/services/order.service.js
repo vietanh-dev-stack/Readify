@@ -7,8 +7,17 @@ import Inventory from "../models/inventory.model.js"
 import Coupon from "../models/coupon.model.js"
 import Order from "../models/order.model.js"
 import OrderItem from "../models/orderItem.model.js"
+import User from "../models/user.model.js"
 
 const orderService = {
+
+    ensureAdmin: async (adminId) => {
+        const admin = await User.findById(adminId).lean()
+
+        if (!admin || admin.role !== 'admin') {
+            throw new ApiError(StatusCodes.FORBIDDEN, 'Admin role is required')
+        }
+    },
 
     createOrder: async (userId, data) => {
         const { addressId, paymentMethod, couponCode } = data
@@ -278,6 +287,104 @@ const orderService = {
         order.paymentStatus = 'failed'
         order.status = 'cancelled'
 
+        await order.save()
+
+        return order
+    },
+
+    getOrdersForAdmin: async (adminId, page = 1, limit = 10, filters = {}) => {
+        await orderService.ensureAdmin(adminId)
+
+        const skip = (page - 1) * limit
+        const query = {}
+
+        if (filters.status) query.status = filters.status
+        if (filters.paymentStatus) query.paymentStatus = filters.paymentStatus
+        if (filters.paymentMethod) query.paymentMethod = filters.paymentMethod
+
+        const [orders, total] = await Promise.all([
+            Order.find(query)
+                .populate('userId', 'fullName email username')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(Number(limit))
+                .lean(),
+            Order.countDocuments(query)
+        ])
+
+        return {
+            data: orders,
+            pagination: {
+                total,
+                page: Number(page),
+                limit: Number(limit),
+                totalPages: Math.ceil(total / limit)
+            }
+        }
+    },
+
+    getOrderDetailForAdmin: async (adminId, orderId) => {
+        await orderService.ensureAdmin(adminId)
+
+        const order = await Order.findById(orderId)
+            .populate('userId', 'fullName email username')
+            .lean()
+
+        if (!order) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Order not found')
+        }
+
+        const items = await OrderItem.find({ orderId }).lean()
+
+        return {
+            order,
+            items
+        }
+    },
+
+    updateOrderStatusByAdmin: async (adminId, orderId, status) => {
+        await orderService.ensureAdmin(adminId)
+
+        const allowedStatuses = ['pending', 'paid', 'shipping', 'completed', 'cancelled']
+
+        if (!allowedStatuses.includes(status)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid order status')
+        }
+
+        const order = await Order.findById(orderId)
+
+        if (!order) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Order not found')
+        }
+
+        if (order.status === 'cancelled' || order.status === 'completed') {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Cannot update this order anymore')
+        }
+
+        if (status === 'cancelled') {
+            const items = await OrderItem.find({ orderId })
+
+            const bulkOps = items.map(item => ({
+                updateOne: {
+                    filter: { bookId: item.bookId },
+                    update: {
+                        $inc: { reserved: -item.quantity }
+                    }
+                }
+            }))
+
+            if (bulkOps.length) {
+                await Inventory.bulkWrite(bulkOps)
+            }
+
+            order.paymentStatus = order.paymentMethod === 'cod' ? 'failed' : order.paymentStatus
+        }
+
+        if (status === 'paid') {
+            order.paymentStatus = 'paid'
+        }
+
+        order.status = status
         await order.save()
 
         return order

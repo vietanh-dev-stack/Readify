@@ -13,15 +13,33 @@ router.post(
 )
 
 router.get(
+    '/admin',
+    authMiddleware.isAuthorized,
+    orderController.getOrdersForAdmin
+)
+
+router.get(
     '/',
     authMiddleware.isAuthorized,
     orderController.getOrder
 )
 
 router.get(
+    '/admin/:orderId',
+    authMiddleware.isAuthorized,
+    orderController.getOrderDetailForAdmin
+)
+
+router.get(
     '/:orderId',
     authMiddleware.isAuthorized,
     orderController.getOrderById
+)
+
+router.patch(
+    '/admin/:orderId/status',
+    authMiddleware.isAuthorized,
+    orderController.updateOrderStatusByAdmin
 )
 
 router.patch(
