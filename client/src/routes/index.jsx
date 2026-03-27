@@ -5,6 +5,8 @@ import Home from '../pages/home/Home';
 import Detail from '../pages/book/Detail';
 import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
+import Checkout from '../pages/checkout/Checkout';
+import PaymentResult from '../pages/checkout/PaymentResult';
 import Wishlist from '../pages/client/Wishlist';
 import Blog from '../pages/blog/Blog';
 import Contact from '../pages/contact/Contact';
@@ -39,6 +41,9 @@ const AppRoutes = () => {
         <Route path="book/:id" element={<Detail />} />
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
+        <Route path="payment-success" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path='/blog' element={<Blog/>}/>
         <Route path='blog/:id' element={<BlogDetail/>}/>

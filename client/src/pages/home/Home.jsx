@@ -285,20 +285,6 @@ const Home = () => {
         </FadeInSection>
       </Box>
 
-      <Box sx={{ background: sectionGradients[1] }}>
-        <FadeInSection delay={0.12}>
-          <div id="featured-books">
-            <BookSection
-              title="Tuyển chọn nổi bật"
-              subtitle="Những cuốn sách được Readify đề xuất cho trải nghiệm đọc tinh tuyển, chỉn chu và đáng sở hữu."
-              books={featuredBooks}
-              exploreLink="/books"
-              exploreText="Khám phá bộ sưu tập"
-            />
-          </div>
-        </FadeInSection>
-      </Box>
-
       <Box sx={{ background: sectionGradients[2] }}>
         <FadeInSection delay={0.16}>
           <BookSection

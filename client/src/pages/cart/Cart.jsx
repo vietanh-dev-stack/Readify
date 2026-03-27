@@ -138,7 +138,14 @@ const Cart = () => {
               <Typography variant="h5" fontWeight={800} color="primary">{total.toLocaleString('vi-VN')} đ</Typography>
             </Box>
 
-            <Button variant="contained" size="large" fullWidth sx={{ py: 1.5, borderRadius: 2, fontWeight: 700 }}>
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              component={Link}
+              to="/checkout"
+              sx={{ py: 1.5, borderRadius: 2, fontWeight: 700 }}
+            >
               Tiến hành thanh toán
             </Button>
             <Button variant="outlined" component={Link} to="/" fullWidth sx={{ mt: 2, py: 1.5, borderRadius: 2 }}>

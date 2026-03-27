@@ -63,7 +63,7 @@ const Contact = () => {
     try {
       // Simulate API call - Replace with actual endpoint
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       setSuccess(true);
       setFormData({
         fullName: '',
@@ -71,7 +71,7 @@ const Contact = () => {
         subject: '',
         message: '',
       });
-      
+
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       setError('Gửi tin nhắn thất bại. Vui lòng thử lại.');
@@ -79,33 +79,6 @@ const Contact = () => {
       setLoading(false);
     }
   };
-
-  const contactInfo = [
-    {
-      icon: LocationOnIcon,
-      title: 'Địa chỉ',
-      content: '123 Phố Sách, Quận 1, Xa Song Ma, TP Son La',
-      delay: 0.1,
-    },
-    {
-      icon: PhoneIcon,
-      title: 'Điện thoại',
-      content: '+84 (0) 1234 567 890',
-      delay: 0.2,
-    },
-    {
-      icon: EmailIcon,
-      title: 'Email',
-      content: 'support@readify.vn',
-      delay: 0.3,
-    },
-    {
-      icon: AccessTimeIcon,
-      title: 'Giờ làm việc',
-      content: 'Thứ 2 - Thứ 6: 8:00 - 18:00\nThứ 7: 9:00 - 17:00\nChủ nhật: Nghỉ',
-      delay: 0.4,
-    },
-  ];
 
   const socialLinks = [
     { icon: FacebookIcon, url: '#', label: 'Facebook' },
@@ -158,30 +131,23 @@ const Contact = () => {
           </Typography>
         </Box>
 
-        {/* Contact Form & Info Grid */}
-        <Grid container spacing={4}>
-          {/* Contact Form */}
-          <Grid item xs={12} md={6}>
+        {/* GRID CONTAINER*/}
+        <Grid container justifyContent="center" sx={{ mt: 4 }}>
+          <Grid item xs={12} md={12}> 
+
             <Box
               component="form"
               onSubmit={handleSubmit}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 2.5,
+                gap: 3,
+                p: { xs: 2, md: 4 },
               }}
             >
+              {/* Thông báo Alert */}
               {success && (
-                <Alert
-                  severity="success"
-                  icon={<CheckCircleIcon />}
-                  sx={{
-                    borderRadius: 2,
-                    backgroundColor: '#F0FDF4',
-                    color: '#166534',
-                    '& .MuiAlert-icon': { color: '#16A34A' },
-                  }}
-                >
+                <Alert severity="success" icon={<CheckCircleIcon />} sx={{ borderRadius: 2 }}>
                   Cảm ơn! Chúng tôi đã nhận được tin nhắn của bạn.
                 </Alert>
               )}
@@ -205,12 +171,6 @@ const Contact = () => {
                       <Box sx={{ width: 20, height: 20, display: 'flex', alignItems: 'center' }}>👤</Box>
                     </InputAdornment>
                   ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    fontSize: '1rem',
-                    padding: '12px 14px',
-                  },
                 }}
               />
 
@@ -259,12 +219,6 @@ const Contact = () => {
                 multiline
                 rows={5}
                 disabled={loading}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    alignItems: 'flex-start',
-                    padding: '12px 14px',
-                  },
-                }}
               />
 
               <Button
@@ -275,96 +229,19 @@ const Contact = () => {
                 endIcon={loading ? <CircularProgress size={20} /> : <SendIcon />}
                 sx={{
                   background: 'linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)',
-                  py: 1.5,
+                  py: 1.8,
                   fontWeight: 600,
-                  mt: 1,
+                  fontSize: '1rem',
+                  borderRadius: 2,
                   '&:hover': {
                     background: 'linear-gradient(135deg, #4338CA 0%, #2F27A5 100%)',
                   },
-                  '&:disabled': {
-                    background: 'rgba(79, 70, 229, 0.5)',
-                  },
                 }}
               >
-                {loading ? 'Đang gửi...' : 'Gửi tin nhắn'}
+                {loading ? 'Đang gửi...' : 'Gửi tin nhắn ngay'}
               </Button>
             </Box>
-          </Grid>
 
-          {/* Contact Information */}
-          <Grid item xs={12} md={6}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {contactInfo.map((info, index) => {
-                const IconComponent = info.icon;
-                return (
-                  <Card
-                    key={index}
-                    sx={{
-                      p: 3,
-                      borderRadius: 2.5,
-                      border: '1px solid #E5E7EB',
-                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                      transition: 'all 0.3s ease-in-out',
-                      animation: `slideUp 0.5s ease-out ${info.delay}s both`,
-                      '@keyframes slideUp': {
-                        from: {
-                          opacity: 0,
-                          transform: 'translateY(20px)',
-                        },
-                        to: {
-                          opacity: 1,
-                          transform: 'translateY(0)',
-                        },
-                      },
-                      '&:hover': {
-                        borderColor: 'primary.main',
-                        boxShadow: '0 10px 25px -5px rgba(79, 70, 229, 0.1)',
-                        transform: 'translateY(-4px)',
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                      <Box
-                        sx={{
-                          width: 50,
-                          height: 50,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: 1.5,
-                          background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <IconComponent sx={{ color: 'white', fontSize: 24 }} />
-                      </Box>
-                      <Box>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{
-                            fontWeight: 700,
-                            color: 'text.primary',
-                            mb: 0.5,
-                          }}
-                        >
-                          {info.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: 'text.secondary',
-                            lineHeight: 1.6,
-                            whiteSpace: 'pre-line',
-                          }}
-                        >
-                          {info.content}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Card>
-                );
-              })}
-            </Box>
           </Grid>
         </Grid>
       </Container>
@@ -388,7 +265,6 @@ const Contact = () => {
           >
             Tìm chúng tôi trên bản đồ
           </Typography>
-          {/* Embed Google Maps */}
           <Box
             sx={{
               borderRadius: 3,

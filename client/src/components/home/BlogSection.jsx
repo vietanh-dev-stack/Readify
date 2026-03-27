@@ -34,9 +34,9 @@ const BlogSection = () => {
 
   const cleanText = (text) => {
     return text
-      ?.replace(/<[^>]+>/g, '')  // 🔥 xoá HTML tag
-      ?.replace(/\\n/g, ' ')     // xoá \n
-      ?.replace(/\s+/g, ' ')     // gộp khoảng trắng
+      ?.replace(/<[^>]+>/g, '')
+      ?.replace(/\\n/g, ' ')
+      ?.replace(/\s+/g, ' ')
       ?.trim();
   };
 
@@ -100,58 +100,70 @@ const BlogSection = () => {
                 >
                   <CardActionArea
                     onClick={() => navigate(`/blog/${post._id}`)}
-                    sx={{ display: 'flex', alignItems: 'stretch' }}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'stretch',
+                      height: '100%'
+                    }}
                   >
-
                     <CardMedia
                       component="img"
-                      image={post.thumbnail}
+                      image={post.thumbnail || 'https://via.placeholder.com/180x200?text=No+Image'} // Backup nếu ảnh lỗi
                       alt={post.title}
                       sx={{
                         width: 180,
+                        flexShrink: 0,
+                        height: '100%',
                         objectFit: 'cover'
                       }}
                     />
 
-                    {/* CONTENT */}
                     <CardContent
                       sx={{
-                        flex: 1,
-                        p: 2
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        p: 2,
+                        height: '100%',
+                        boxSizing: 'border-box'
                       }}
                     >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          mb: 1,
-                          fontSize: 18,
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden"
-                        }}
-                      >
-                        {post.title}
-                      </Typography>
+                      <Box>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 700,
+                            mb: 1,
+                            fontSize: 18,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden"
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: 14,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden"
+                          }}
+                        >
+                          {cleanText(post.content)}
+                        </Typography>
+                      </Box>
 
                       <Typography
-                        variant="body2"
                         sx={{
-                          color: 'text.secondary',
-                          fontSize: 14,
-                          display: "-webkit-box",
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden"
-                        }}
-                      >
-                        {cleanText(post.content)}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          mt: 1,
+                          mt: 'auto',
                           color: '#3b82f6',
                           fontWeight: 600,
                           fontSize: 14
@@ -160,7 +172,6 @@ const BlogSection = () => {
                         Đọc thêm →
                       </Typography>
                     </CardContent>
-
                   </CardActionArea>
                 </Card>
               </Grid>
