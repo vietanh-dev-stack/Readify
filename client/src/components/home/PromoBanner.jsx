@@ -1,26 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Container } from '@mui/material';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Button, Container, Chip, Stack } from '@mui/material';
+import LocalOfferRoundedIcon from '@mui/icons-material/LocalOfferRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
+import { useNavigate } from 'react-router-dom';
 
 const TimeBlock = ({ value, label }) => (
-  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    <Box sx={{ 
-      bgcolor: 'rgba(255,255,255,0.2)', 
-      backdropFilter: 'blur(10px)',
-      borderRadius: 1.5, 
-      width: { xs: 50, md: 60 }, 
-      height: { xs: 50, md: 60 }, 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      border: '1px solid rgba(255,255,255,0.3)',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-    }}>
-      <Typography variant="h5" sx={{ fontWeight: 800, color: '#fff' }}>
+  <Box sx={{ textAlign: 'center' }}>
+    <Box
+      sx={{
+        minWidth: { xs: 68, md: 78 },
+        px: 1.5,
+        py: 1.6,
+        borderRadius: 3,
+        background: 'rgba(255,255,255,0.12)',
+        border: '1px solid rgba(255,255,255,0.18)',
+        backdropFilter: 'blur(12px)',
+        boxShadow: '0 12px 28px rgba(15, 23, 42, 0.16)'
+      }}
+    >
+      <Typography
+        sx={{
+          fontSize: { xs: '1.5rem', md: '1.85rem' },
+          fontWeight: 900,
+          color: '#fff',
+          lineHeight: 1
+        }}
+      >
         {String(value).padStart(2, '0')}
       </Typography>
     </Box>
-    <Typography variant="caption" sx={{ mt: 0.5, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>
+    <Typography
+      variant="caption"
+      sx={{
+        mt: 1,
+        display: 'block',
+        color: 'rgba(255,255,255,0.82)',
+        fontWeight: 700,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase'
+      }}
+    >
       {label}
     </Typography>
   </Box>
@@ -28,102 +48,205 @@ const TimeBlock = ({ value, label }) => (
 
 const PromoBanner = () => {
   const [timeLeft, setTimeLeft] = useState({ h: 23, m: 59, s: 59 });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         let { h, m, s } = prev;
-        if (s > 0) s--;
-        else {
+
+        if (s > 0) {
+          s -= 1;
+        } else {
           s = 59;
-          if (m > 0) m--;
-          else {
+          if (m > 0) {
+            m -= 1;
+          } else {
             m = 59;
-            if (h > 0) h--;
+            if (h > 0) {
+              h -= 1;
+            }
           }
         }
+
         return { h, m, s };
       });
     }, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <Box sx={{ py: 6 }}>
+    <Box sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="xl">
-        <Box 
+        <Box
           sx={{
-            background: 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)',
-            borderRadius: 4,
-            overflow: 'hidden',
             position: 'relative',
-            p: { xs: 4, md: 6 },
+            overflow: 'hidden',
+            borderRadius: { xs: 4, md: 5 },
+            p: { xs: 3, md: 5, lg: 6 },
             color: '#fff',
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 20px 40px -10px rgba(225, 29, 72, 0.4)'
+            background: 'linear-gradient(135deg, #172554 0%, #1e3a8a 48%, #f59e0b 140%)',
+            boxShadow: '0 24px 50px rgba(30, 58, 138, 0.24)'
           }}
         >
-          {/* Accent Graphic */}
-          <Box sx={{
-            position: 'absolute', left: '-5%', top: '-50%', width: '300px', height: '300px',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)', 
-            borderRadius: '50%', pointerEvents: 'none'
-          }} />
-          <Box sx={{
-            position: 'absolute', right: '10%', bottom: '-20%', width: '250px', height: '250px',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%)', 
-            borderRadius: '50%', pointerEvents: 'none'
-          }} />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '-25%',
+              right: '-6%',
+              width: { xs: 200, md: 300 },
+              height: { xs: 200, md: 300 },
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.12)',
+              filter: 'blur(12px)'
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: '-22%',
+              left: '-8%',
+              width: { xs: 220, md: 320 },
+              height: { xs: 220, md: 320 },
+              borderRadius: '50%',
+              background: 'rgba(245, 158, 11, 0.22)',
+              filter: 'blur(10px)'
+            }}
+          />
 
-          {/* Text Content */}
-          <Box sx={{ position: 'relative', zIndex: 1, textAlign: { xs: 'center', md: 'left' }, mb: { xs: 4, md: 0 } }}>
-            <Typography variant="overline" sx={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: 1, justifyContent: { xs: 'center', md: 'flex-start' }, mb: 1, color: '#fde047', letterSpacing: 2 }}>
-              <LocalFireDepartmentIcon /> FLASH SALE CUỐI TUẦN
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 900, mb: 2, textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
-              Giảm giá đến 50%
-            </Typography>
-            <Typography variant="body1" sx={{ maxWidth: '500px', color: 'rgba(255,255,255,0.9)', mb: 3 }}>
-              Hàng ngàn tựa sách bán chạy đang được giảm giá cực sốc. Nhanh tay săn deal trước khi thời gian kết thúc!
-            </Typography>
-            
-            {/* Countdown Timer */}
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
-              <TimeBlock value={timeLeft.h} label="Giờ" />
-              <Typography variant="h4" sx={{ fontWeight: 800, pt: 1, color: 'rgba(255,255,255,0.5)' }}>:</Typography>
-              <TimeBlock value={timeLeft.m} label="Phút" />
-              <Typography variant="h4" sx={{ fontWeight: 800, pt: 1, color: 'rgba(255,255,255,0.5)' }}>:</Typography>
-              <TimeBlock value={timeLeft.s} label="Giây" />
+          <Box
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', lg: '1.2fr 0.8fr' },
+              gap: { xs: 4, md: 5 },
+              alignItems: 'center'
+            }}
+          >
+            <Box>
+              <Chip
+                icon={<LocalOfferRoundedIcon sx={{ color: '#fbbf24 !important' }} />}
+                label="Chiến dịch ưu đãi trong ngày"
+                sx={{
+                  mb: 2,
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  fontWeight: 800,
+                  borderRadius: 99,
+                  border: '1px solid rgba(255,255,255,0.16)'
+                }}
+              />
+
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 900,
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.03em',
+                  mb: 2,
+                  fontSize: { xs: '2rem', md: '2.75rem', lg: '3.2rem' }
+                }}
+              >
+                Nhập mã <Box component="span" sx={{ color: '#fcd34d' }}>READIFY25</Box> để giảm thêm 25%
+              </Typography>
+
+              <Typography
+                sx={{
+                  maxWidth: 660,
+                  color: 'rgba(226, 232, 240, 0.94)',
+                  lineHeight: 1.8,
+                  fontSize: { xs: '1rem', md: '1.05rem' },
+                  mb: 3
+                }}
+              >
+                Áp dụng cho hàng ngàn đầu sách được yêu thích nhất tuần này. Kết hợp cùng các ưu đãi vận
+                chuyển và quà tặng thành viên để tối ưu giá trị đơn hàng.
+              </Typography>
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  endIcon={<ArrowForwardRoundedIcon />}
+                  onClick={() => navigate('/categories')}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 99,
+                    textTransform: 'none',
+                    fontWeight: 800,
+                    bgcolor: '#fff',
+                    color: '#172554',
+                    '&:hover': {
+                      bgcolor: '#f8fafc',
+                      transform: 'translateY(-2px)'
+                    }
+                  }}
+                >
+                  Săn deal ngay
+                </Button>
+
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 1.8,
+                    py: 1.1,
+                    borderRadius: 99,
+                    bgcolor: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.15)'
+                  }}
+                >
+                  <AccessTimeRoundedIcon sx={{ fontSize: 18, color: '#fcd34d' }} />
+                  <Typography sx={{ fontWeight: 700, color: '#e2e8f0' }}>
+                    Hiệu lực đến hết hôm nay
+                  </Typography>
+                </Box>
+              </Stack>
             </Box>
-          </Box>
 
-          {/* CTA Button */}
-          <Box sx={{ position: 'relative', zIndex: 1, mt: { xs: 2, md: 0 } }}>
-            <Button
-              variant="contained"
-              size="large"
+            <Box
               sx={{
-                bgcolor: '#fff',
-                color: '#e11d48',
-                fontWeight: 800,
-                px: 5,
-                py: 2.5,
-                borderRadius: '50px',
-                fontSize: '1.15rem',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-                '&:hover': {
-                  bgcolor: '#f8fafc',
-                  transform: 'translateY(-5px) scale(1.05)',
-                  boxShadow: '0 20px 30px rgba(0,0,0,0.3)'
-                },
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                justifySelf: { xs: 'stretch', lg: 'end' },
+                width: '100%',
+                maxWidth: 390,
+                p: { xs: 2.5, md: 3 },
+                borderRadius: 4,
+                bgcolor: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.16)',
+                backdropFilter: 'blur(16px)'
               }}
             >
-              Săn Deal Ngay
-            </Button>
+              <Typography sx={{ fontWeight: 800, mb: 2, color: '#f8fafc' }}>
+                Đồng hồ ưu đãi
+              </Typography>
+
+              <Stack direction="row" spacing={1.5} justifyContent="space-between">
+                <TimeBlock value={timeLeft.h} label="Giờ" />
+                <TimeBlock value={timeLeft.m} label="Phút" />
+                <TimeBlock value={timeLeft.s} label="Giây" />
+              </Stack>
+
+              <Box
+                sx={{
+                  mt: 3,
+                  p: 2,
+                  borderRadius: 3,
+                  bgcolor: 'rgba(15, 23, 42, 0.18)',
+                  border: '1px dashed rgba(255,255,255,0.2)'
+                }}
+              >
+                <Typography sx={{ fontSize: '0.85rem', color: '#cbd5e1', mb: 0.8 }}>
+                  Mã ưu đãi độc quyền
+                </Typography>
+                <Typography sx={{ fontSize: '1.35rem', fontWeight: 900, letterSpacing: '0.08em' }}>
+                  READIFY25
+                </Typography>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Container>

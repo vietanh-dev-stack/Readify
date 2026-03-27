@@ -1,43 +1,50 @@
-import React from 'react';
-import { Box, Typography, Container, Grid, Card, CardContent, Button, Chip } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Button,
+  Chip,
+  CardActionArea,
+  CardMedia
+} from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-
-const blogPosts = [
-  {
-    id: 1,
-    title: "10 Cuốn Sách Phát Triển Bản Thân",
-    excerpt: "Những cuốn sách giúp bạn thay đổi tư duy và phát triển bản thân toàn diện.",
-    icon: <PsychologyIcon />
-  },
-  {
-    id: 2,
-    title: "Review Đắc Nhân Tâm",
-    excerpt: "Cuốn sách kinh điển về nghệ thuật giao tiếp và ứng xử trong cuộc sống.",
-    icon: <MenuBookIcon />
-  },
-  {
-    id: 3,
-    title: "Văn học vs Trinh thám",
-    excerpt: "So sánh hai thể loại sách phổ biến và khám phá phong cách đọc của bạn.",
-    icon: <AutoStoriesIcon />
-  },
-  {
-    id: 4,
-    title: "Xu hướng đọc sách 2026",
-    excerpt: "Những xu hướng đọc sách mới nhất trong cộng đồng yêu sách hiện đại.",
-    icon: <MenuBookIcon />
-  }
-];
+import { useNavigate } from 'react-router-dom';
+import { fetchBlogs } from '../../services/blog.service';
 
 const BlogSection = () => {
+  const navigate = useNavigate();
+
+  const [blogs, setBlogs] = useState([])
+
+  useEffect(() => {
+    const fectData = async () => {
+      try {
+        const response = await fetchBlogs()
+        setBlogs(response.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fectData()
+  }, [])
+
+  const cleanText = (text) => {
+    return text
+      ?.replace(/<[^>]+>/g, '')  // 🔥 xoá HTML tag
+      ?.replace(/\\n/g, ' ')     // xoá \n
+      ?.replace(/\s+/g, ' ')     // gộp khoảng trắng
+      ?.trim();
+  };
+
   return (
-    <Box sx={{ py: 10}}>
+    <Box sx={{ py: 10 }}>
       <Container maxWidth="lg">
 
-        {/* Header giống 100% hình */}
+        {/* HEADER */}
         <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Chip
             label="BLOG"
@@ -59,56 +66,105 @@ const BlogSection = () => {
           </Typography>
         </Box>
 
-        {/* Grid giống feature card */}
+        {/* GRID 2 COLUMN */}
         <Grid container spacing={4}>
-          {blogPosts.map((post) => (
-            <Grid item xs={12} sm={6} md={3} key={post.id}>
-              <Card
+          {blogs
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 4)
+            .map((post) => (
+              <Grid
+                item
+                xs={12}
+                md={6}
+                key={post._id}
                 sx={{
-                  borderRadius: 4,
-                  p: 3,
-                  height: '100%',
-                  transition: 'all 0.3s',
-                  border: '1px solid #e5e7eb',
-                  '&:hover': {
-                    transform: 'translateY(-6px)',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.08)'
-                  }
+                  display: 'flex',
+                  justifyContent: 'center'
                 }}
               >
-                <CardContent sx={{ p: 0 }}>
-
-                  {/* Icon */}
-                  <Box
-                    sx={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 2,
-                      background: '#3b82f6',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 2
-                    }}
+                <Card
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                    maxWidth: 520,
+                    height: 200,
+                    borderRadius: 4,
+                    overflow: 'hidden',
+                    border: '1px solid #e5e7eb',
+                    transition: 'all 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.08)'
+                    }
+                  }}
+                >
+                  <CardActionArea
+                    onClick={() => navigate(`/blog/${post._id}`)}
+                    sx={{ display: 'flex', alignItems: 'stretch' }}
                   >
-                    {post.icon}
-                  </Box>
 
-                  {/* Title */}
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-                    {post.title}
-                  </Typography>
+                    <CardMedia
+                      component="img"
+                      image={post.thumbnail}
+                      alt={post.title}
+                      sx={{
+                        width: 180,
+                        objectFit: 'cover'
+                      }}
+                    />
 
-                  {/* Description */}
-                  <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                    {post.excerpt}
-                  </Typography>
+                    {/* CONTENT */}
+                    <CardContent
+                      sx={{
+                        flex: 1,
+                        p: 2
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          mb: 1,
+                          fontSize: 18,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden"
+                        }}
+                      >
+                        {post.title}
+                      </Typography>
 
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: 'text.secondary',
+                          fontSize: 14,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden"
+                        }}
+                      >
+                        {cleanText(post.content)}
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          mt: 1,
+                          color: '#3b82f6',
+                          fontWeight: 600,
+                          fontSize: 14
+                        }}
+                      >
+                        Đọc thêm →
+                      </Typography>
+                    </CardContent>
+
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
 
         {/* CTA */}
@@ -120,6 +176,7 @@ const BlogSection = () => {
               fontWeight: 600,
               textTransform: 'none'
             }}
+            onClick={() => navigate('/blog')}
           >
             Xem tất cả bài viết
           </Button>
