@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Box, Paper, Avatar, Button, Grid, Tab, Tabs, Divider, List, ListItem, ListItemText, ListItemAvatar } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import PersonIcon from '@mui/icons-material/Person';
@@ -6,14 +6,29 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import { getOrders } from '../../services/order.service';
 
 const Profile = () => {
   const { user, logout } = useAuth();
   const [tabValue, setTabValue] = useState(0);
+  const [orders, setOrders] = useState([])
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const orderResponse = await getOrders()
+        setOrders(orderResponse.data.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData()
+  }, [])
+
 
   if (!user) {
     return (
@@ -23,11 +38,6 @@ const Profile = () => {
     );
   }
 
-  // Mock Orders
-  const mockOrders = [
-    { id: '#ORD-1029', date: '24 Tháng 10, 2026', total: '450.000 đ', status: 'Đã giao hàng' },
-    { id: '#ORD-0982', date: '12 Tháng 9, 2026', total: '125.000 đ', status: 'Đã giao hàng' },
-  ];
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -121,8 +131,8 @@ const Profile = () => {
               <Box>
                 <Typography variant="h5" fontWeight={700} gutterBottom mb={3}>Lịch sử đơn hàng</Typography>
                 <List sx={{ width: '100%' }}>
-                  {mockOrders.map((order, index) => (
-                    <React.Fragment key={order.id}>
+                  {orders.map((order, index) => (
+                    <React.Fragment key={order._id}>
                       <ListItem alignItems="flex-start" sx={{ px: 0, py: 2 }}>
                         <ListItemAvatar>
                           <Avatar sx={{ bgcolor: 'grey.100', color: 'primary.main' }}>
@@ -132,19 +142,19 @@ const Profile = () => {
                         <ListItemText
                           primary={
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                              <Typography variant="subtitle1" fontWeight={700}>{order.id}</Typography>
-                              <Typography variant="subtitle1" fontWeight={700}>{order.total}</Typography>
+                              <Typography variant="subtitle1" fontWeight={700}>{order._id}</Typography>
+                              <Typography variant="subtitle1" fontWeight={700}>{order.finalPrice.toLocaleString('vi-VN') + ' đ'}</Typography>
                             </Box>
                           }
                           secondary={
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <Typography variant="body2" color="text.secondary">Đặt ngày {order.date}</Typography>
+                              <Typography variant="body2" color="text.secondary">Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}</Typography>
                               <Typography variant="body2" color="success.main" fontWeight={600}>{order.status}</Typography>
                             </Box>
                           }
                         />
                       </ListItem>
-                      {index < mockOrders.length - 1 && <Divider component="li" />}
+                      {index < orders.length - 1 && <Divider component="li" />}
                     </React.Fragment>
                   ))}
                 </List>

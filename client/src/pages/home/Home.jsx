@@ -225,7 +225,7 @@ const Home = () => {
     };
   }, []);
 
-  const { featuredBooks, trendingBooks, newArrivals } = useMemo(() => {
+  const { trendingBooks, newArrivals } = useMemo(() => {
     const normalizedBooks = dedupeBooks(Array.isArray(books) ? books.filter(Boolean) : []);
 
     const featured = [...normalizedBooks]
