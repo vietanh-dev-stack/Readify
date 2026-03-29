@@ -36,7 +36,8 @@ const env = {
   MOMO_ENDPOINT: process.env.MOMO_ENDPOINT,
   MOMO_NOTIFY_URL: process.env.MOMO_NOTIFY_URL,
   MOMO_REDIRECT_URL: process.env.MOMO_REDIRECT_URL,
-
+  MOMO_MOCK: process.env.MOMO_MOCK,
+  
   GEMINI_API_KEY: process.env.GEMINI_API_KEY
 }
 

@@ -6,12 +6,42 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { getOrders } from '../../services/order.service';
+import { getShipmentByOrderId } from '../../services/shipment.service';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, CircularProgress } from '@mui/material';
 
 const Profile = () => {
   const { user, logout } = useAuth();
   const [tabValue, setTabValue] = useState(0);
-  const [orders, setOrders] = useState([])
+  const [orders, setOrders] = useState([]);
+
+  const [trackingOpen, setTrackingOpen] = useState(false);
+  const [selectedOrderTracking, setSelectedOrderTracking] = useState(null);
+  const [shipmentInfo, setShipmentInfo] = useState(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+
+  const handleOpenTracking = async (orderId) => {
+    setTrackingOpen(true);
+    setSelectedOrderTracking(orderId);
+    setTrackingLoading(true);
+    setShipmentInfo(null);
+    try {
+      const res = await getShipmentByOrderId(orderId);
+      setShipmentInfo(res.data.data);
+    } catch (err) {
+      console.log('No shipment information found');
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
+
+  const handleCloseTracking = () => {
+    setTrackingOpen(false);
+    setSelectedOrderTracking(null);
+    setShipmentInfo(null);
+  };
+
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -142,14 +172,17 @@ const Profile = () => {
                         <ListItemText
                           primary={
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                              <Typography variant="subtitle1" fontWeight={700}>{order._id}</Typography>
+                                <Typography variant="subtitle1" fontWeight={700}>{order._id}</Typography>
                               <Typography variant="subtitle1" fontWeight={700}>{order.finalPrice.toLocaleString('vi-VN') + ' đ'}</Typography>
                             </Box>
                           }
                           secondary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <Typography variant="body2" color="text.secondary">Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}</Typography>
-                              <Typography variant="body2" color="success.main" fontWeight={600}>{order.status}</Typography>
+                              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                <Typography variant="body2" color="success.main" fontWeight={600}>{order.status}</Typography>
+                                <Button size="small" variant="outlined" startIcon={<LocalShippingIcon />} onClick={() => handleOpenTracking(order._id)}>Theo dõi</Button>
+                              </Box>
                             </Box>
                           }
                         />
@@ -176,6 +209,52 @@ const Profile = () => {
           </Paper>
         </Box>
       </Box>
+
+      {/* Tracking Dialog */}
+      <Dialog open={trackingOpen} onClose={handleCloseTracking} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontWeight: 700 }}>Thông tin vận chuyển</DialogTitle>
+        <DialogContent dividers>
+          {trackingLoading ? (
+            <Box sx={{ p: 4, textAlign: 'center' }}><CircularProgress /></Box>
+          ) : shipmentInfo ? (
+            <Box>
+              <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Typography variant="subtitle2" color="text.secondary">Mã vận đơn (Tracking No):</Typography>
+                <Typography variant="body1" fontWeight={700} gutterBottom>{shipmentInfo.trackingNumber}</Typography>
+                
+                <Typography variant="subtitle2" color="text.secondary" mt={1}>Đơn vị vận chuyển:</Typography>
+                <Typography variant="body1" fontWeight={700} sx={{ textTransform: 'uppercase' }}>{shipmentInfo.provider}</Typography>
+              </Box>
+              
+              <Typography variant="h6" fontWeight={700} mb={2}>Tiến trình giao hàng</Typography>
+              <Stepper activeStep={shipmentInfo.events.length} orientation="vertical">
+                {shipmentInfo.events.map((event, index) => (
+                  <Step key={index} active={true} completed={true}>
+                    <StepLabel
+                      optional={
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">{new Date(event.timestamp).toLocaleString('vi-VN')}</Typography>
+                          {event.location && <Typography variant="caption" display="block" color="text.secondary">Vị trí: {event.location}</Typography>}
+                        </Box>
+                      }
+                    >
+                      <Typography fontWeight={600} mb={0.5} sx={{ textTransform: 'capitalize' }}>{event.status.replace(/_/g, ' ')}</Typography>
+                      <Typography variant="body2">{event.message}</Typography>
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+          ) : (
+            <Box sx={{ p: 2, textAlign: 'center' }}>
+               <Typography color="text.secondary">Đơn hàng này chưa được đóng gói hoặc chưa có thông tin vận chuyển.</Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseTracking}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

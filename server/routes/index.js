@@ -13,6 +13,7 @@ import orderRoutes from './v1/order.route.js'
 import addressRoutes from './v1/address.route.js'
 import blogRoutes from './v1/blog.route.js'
 import paymentRoutes from './v1/payment.route.js'
+import shipmentRoutes from './v1/shipment.route.js'
 
 const Router = express.Router()
 
@@ -34,5 +35,6 @@ Router.use('/order', orderRoutes)
 Router.use('/address', addressRoutes)
 Router.use('/blog', blogRoutes)
 Router.use('/payment', paymentRoutes)
+Router.use('/shipment', shipmentRoutes)
 
 export default Router

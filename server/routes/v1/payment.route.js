@@ -12,4 +12,6 @@ router.get('/momo-return', paymentController.momoReturn)
 
 router.post('/momo-webhook', paymentController.momoWebhook)
 
+router.get('/momo-mock-return', paymentController.momoMockReturn)
+
 export default router

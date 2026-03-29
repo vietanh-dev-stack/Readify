@@ -28,6 +28,8 @@ import {
 import { Refresh as RefreshIcon, Search as SearchIcon } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { getAdminOrderById, getAdminOrders, updateAdminOrderStatus } from '../../services/order.service';
+import { getShipmentByOrderId, createShipment, updateTrackingEvent } from '../../services/shipment.service';
+import { Stepper, Step, StepLabel, Divider } from '@mui/material';
 
 const STATUS_OPTIONS = ['pending', 'paid', 'shipping', 'completed', 'cancelled'];
 const PAYMENT_STATUS_OPTIONS = ['pending', 'paid', 'failed'];
@@ -76,6 +78,11 @@ const OrderManagement = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [statusDraft, setStatusDraft] = useState('');
   const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const [shipmentInfo, setShipmentInfo] = useState(null);
+  const [creatingShipment, setCreatingShipment] = useState(false);
+  const [newTrackingStatus, setNewTrackingStatus] = useState('');
+  const [trackingMessage, setTrackingMessage] = useState('');
 
   const fetchOrders = async (page = pagination.page) => {
     try {
@@ -129,11 +136,22 @@ const OrderManagement = () => {
     try {
       setDetailOpen(true);
       setDetailLoading(true);
+      setShipmentInfo(null);
+      setNewTrackingStatus('');
+      setTrackingMessage('');
+      
       const response = await getAdminOrderById(orderId);
       const detail = response?.data?.data;
       setSelectedOrder(detail?.order || null);
       setSelectedItems(detail?.items || []);
       setStatusDraft(detail?.order?.status || '');
+
+      try {
+        const shipRes = await getShipmentByOrderId(orderId);
+        setShipmentInfo(shipRes.data.data);
+      } catch (err) {
+        // No shipment available
+      }
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Không thể tải chi tiết đơn hàng');
       setDetailOpen(false);
@@ -168,6 +186,49 @@ const OrderManagement = () => {
       setUpdatingStatus(false);
     }
   };
+
+  const handleCreateShipment = async () => {
+    try {
+      setCreatingShipment(true);
+      const response = await createShipment(selectedOrder._id, { provider: 'self' });
+      setShipmentInfo(response.data.data);
+      // Cập nhật status order hiển thị
+      setSelectedOrder(prev => ({...prev, status: 'shipping'}));
+      setStatusDraft('shipping');
+      setOrders((prev) => prev.map((order) => (order._id === selectedOrder._id ? { ...order, status: 'shipping' } : order)));
+      toast.success('Đã khởi tạo đơn giao hàng');
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Không thể khởi tạo giao hàng');
+    } finally {
+      setCreatingShipment(false);
+    }
+  };
+
+  const handleUpdateShipmentEvent = async () => {
+    if (!newTrackingStatus || !trackingMessage) return toast.error('Vui lòng nhập đủ thông tin trạng thái');
+    try {
+      setCreatingShipment(true);
+      const response = await updateTrackingEvent(selectedOrder._id, {
+        status: newTrackingStatus,
+        message: trackingMessage,
+        location: 'Kho tổng'
+      });
+      setShipmentInfo(response.data.data);
+      if (['delivered', 'returned', 'failed'].includes(newTrackingStatus)) {
+         const newOrderStatus = newTrackingStatus === 'delivered' ? 'completed' : 'cancelled';
+         setSelectedOrder(prev => ({...prev, status: newOrderStatus}));
+         setStatusDraft(newOrderStatus);
+         setOrders((prev) => prev.map((order) => (order._id === selectedOrder._id ? { ...order, status: newOrderStatus } : order)));
+      }
+      setNewTrackingStatus('');
+      setTrackingMessage('');
+      toast.success('Cập nhật luồng giao hàng thành công');
+    } catch (err) {
+      toast.error('Có lỗi xảy ra khi cập nhật tuyến giao hàng');
+    } finally {
+      setCreatingShipment(false);
+    }
+  }
 
   return (
     <Box>
@@ -445,6 +506,66 @@ const OrderManagement = () => {
                     ))
                   )}
                 </Stack>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5, mt: 2 }}>
+                  Thông tin vận chuyển
+                </Typography>
+                
+                {shipmentInfo ? (
+                  <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3, bgcolor: 'grey.50' }}>
+                     <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" color="text.secondary">Tracking No:</Typography>
+                        <Typography variant="body1" fontWeight={700} gutterBottom>{shipmentInfo.trackingNumber}</Typography>
+                        
+                        <Typography variant="subtitle2" color="text.secondary" mt={1}>Provider:</Typography>
+                        <Typography variant="body1" fontWeight={700} sx={{ textTransform: 'uppercase' }}>{shipmentInfo.provider}</Typography>
+                     </Box>
+                     <Stepper activeStep={shipmentInfo.events.length} orientation="vertical" sx={{ mb: 4 }}>
+                        {shipmentInfo.events.map((event, index) => (
+                          <Step key={index} active={true} completed={true}>
+                            <StepLabel
+                              optional={
+                                <Box>
+                                  <Typography variant="caption" color="text.secondary">{new Date(event.timestamp).toLocaleString('vi-VN')}</Typography>
+                                </Box>
+                              }
+                            >
+                              <Typography fontWeight={600} mb={0.5} sx={{ textTransform: 'capitalize' }}>{event.status}</Typography>
+                              <Typography variant="body2">{event.message}</Typography>
+                            </StepLabel>
+                          </Step>
+                        ))}
+                      </Stepper>
+
+                      <Divider sx={{ my: 2 }} />
+                      <Typography variant="subtitle2" fontWeight={700} mb={2}>Cập nhật tiến trình giao hàng</Typography>
+                      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                        <FormControl size="small" sx={{ minWidth: 150 }}>
+                          <InputLabel>Trạng thái</InputLabel>
+                          <Select value={newTrackingStatus} label="Trạng thái" onChange={(e) => setNewTrackingStatus(e.target.value)}>
+                            <MenuItem value="in_transit">Đang luân chuyển</MenuItem>
+                            <MenuItem value="out_for_delivery">Đang đi giao</MenuItem>
+                            <MenuItem value="delivered">Đã giao hàng</MenuItem>
+                            <MenuItem value="failed">Giao thất bại</MenuItem>
+                            <MenuItem value="returned">Đã hoàn hàng</MenuItem>
+                          </Select>
+                        </FormControl>
+                        <TextField size="small" label="Ghi chú / Tin nhắn" value={trackingMessage} onChange={e => setTrackingMessage(e.target.value)} fullWidth />
+                        <Button variant="contained" disabled={creatingShipment} onClick={handleUpdateShipmentEvent}>Cập nhật</Button>
+                      </Stack>
+                  </Paper>
+                ) : (
+                  <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3, textAlign: 'center' }}>
+                     <Typography color="text.secondary" mb={2}>Đơn hàng chưa được đưa vào luồng giao hàng.</Typography>
+                     {(selectedOrder.paymentStatus === 'paid' || selectedOrder.paymentMethod === 'cod') && selectedOrder.status !== 'cancelled' ? (
+                       <Button variant="contained" color="primary" onClick={handleCreateShipment} disabled={creatingShipment}>Tạo đơn giao hàng ngay</Button>
+                     ) : (
+                       <Alert severity="warning" sx={{ textAlign: 'left' }}>Chỉ đơn hàng COD hoặc Đã thanh toán mới có thể tạo vận chuyển.</Alert>
+                     )}
+                  </Paper>
+                )}
               </Box>
             </Stack>
           ) : (

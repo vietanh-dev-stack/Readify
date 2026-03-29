@@ -6,6 +6,22 @@ import Order from '../models/order.model.js'
 import ApiError from '../utils/apiError.js'
 import { StatusCodes } from 'http-status-codes'
 
+function sortObject(obj) {
+    let sorted = {};
+    let str = [];
+    let key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            str.push(encodeURIComponent(key));
+        }
+    }
+    str.sort();
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+    }
+    return sorted;
+}
+
 const paymentService = {
 
     // Vnpay
@@ -17,39 +33,45 @@ const paymentService = {
 
         const date = moment().format('YYYYMMDDHHmmss')
 
-        const vnpParams = {
+        let vnpParams = {
             vnp_Version: '2.1.0',
             vnp_Command: 'pay',
             vnp_TmnCode: tmnCode,
-            vnp_Amount: order.finalPrice * 100,
+            vnp_Locale: 'vn',
             vnp_CurrCode: 'VND',
             vnp_TxnRef: order._id.toString(),
             vnp_OrderInfo: `Thanh toan don hang ${order._id}`,
             vnp_OrderType: 'other',
-            vnp_Locale: 'vn',
+            vnp_Amount: order.finalPrice * 100,
             vnp_ReturnUrl: returnUrl,
             vnp_IpAddr: ipAddr,
             vnp_CreateDate: date
         }
 
-        const sortedParams = qs.stringify(vnpParams, { encode: false })
-        const signData = sortedParams
+        vnpParams = sortObject(vnpParams)
+
+        const signData = qs.stringify(vnpParams, { encode: false })
 
         const hmac = crypto.createHmac('sha512', secretKey)
-        const signed = hmac.update(signData).digest('hex')
+        const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex')
 
-        return `${vnpUrl}?${sortedParams}&vnp_SecureHash=${signed}`
+        vnpParams['vnp_SecureHash'] = signed
+
+        return `${vnpUrl}?${qs.stringify(vnpParams, { encode: false })}`
     },
 
     verifyVNPayReturn: async (query) => {
-        const secureHash = query.vnp_SecureHash
-        delete query.vnp_SecureHash
-        delete query.vnp_SecureHashType
+        let vnpParams = query;
+        let secureHash = vnpParams['vnp_SecureHash'];
 
-        const sorted = qs.stringify(query, { encode: false })
+        delete vnpParams['vnp_SecureHash'];
+        delete vnpParams['vnp_SecureHashType'];
 
-        const hmac = crypto.createHmac('sha512', process.env.VNP_HASH_SECRET)
-        const checkSum = hmac.update(sorted).digest('hex')
+        vnpParams = sortObject(vnpParams);
+
+        const signData = qs.stringify(vnpParams, { encode: false });
+        const hmac = crypto.createHmac('sha512', process.env.VNP_HASH_SECRET);
+        const checkSum = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
         if (secureHash !== checkSum) {
             throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid signature')
@@ -77,6 +99,15 @@ const paymentService = {
 
     // Momo
     createMomoPayment: async (order) => {
+        const isMock = process.env.MOMO_MOCK === 'true'
+
+        // 👉 MOCK MODE
+        if (isMock) {
+            const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173'
+            return `${clientUrl}/momo-mock?orderId=${order._id}&amount=${order.finalPrice}`
+        }
+
+        // 👉 REAL MODE (giữ nguyên code của bạn)
         const {
             MOMO_PARTNER_CODE,
             MOMO_ACCESS_KEY,
@@ -114,17 +145,47 @@ const paymentService = {
             lang: 'vi'
         }
 
-        const res = await axios.post(MOMO_ENDPOINT, body)
+        try {
+            const res = await axios.post(MOMO_ENDPOINT, body)
 
-        return res.data.payUrl
+            if (res.data && res.data.resultCode !== 0) {
+                throw new Error(res.data.message || 'MoMo API returned error')
+            }
+
+            return res.data.payUrl
+        } catch (error) {
+            console.error('MoMo Create Payment Error:', error.response?.data || error.message)
+            throw new ApiError(400, 'Thiết lập Ví MoMo không hợp lệ')
+        }
     },
 
     verifyMomoWebhook: async (body) => {
         const {
+            partnerCode,
             orderId,
+            requestId,
+            amount,
+            orderInfo,
+            orderType,
+            transId,
             resultCode,
-            transId
+            message,
+            payType,
+            responseTime,
+            extraData,
+            signature
         } = body
+
+        const rawSignature = `accessKey=${process.env.MOMO_ACCESS_KEY}&amount=${amount}&extraData=${extraData}&message=${message}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&partnerCode=${partnerCode}&payType=${payType}&requestId=${requestId}&responseTime=${responseTime}&resultCode=${resultCode}&transId=${transId}`
+
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.MOMO_SECRET_KEY)
+            .update(rawSignature)
+            .digest('hex')
+
+        if (signature !== expectedSignature) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid signature')
+        }
 
         const order = await Order.findById(orderId)
 
@@ -135,7 +196,7 @@ const paymentService = {
         if (Number(resultCode) === 0) {
             order.paymentStatus = 'paid'
             order.status = 'paid'
-            order.paymentRef = transId
+            order.paymentRef = transId.toString()
         } else {
             order.paymentStatus = 'failed'
         }

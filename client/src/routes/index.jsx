@@ -7,6 +7,7 @@ import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
 import Checkout from '../pages/checkout/Checkout';
 import PaymentResult from '../pages/checkout/PaymentResult';
+import MomoMock from '../pages/checkout/MomoMock';
 import Wishlist from '../pages/client/Wishlist';
 import Blog from '../pages/blog/Blog';
 import Contact from '../pages/contact/Contact';
@@ -47,6 +48,7 @@ const AppRoutes = () => {
         <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path="payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
         <Route path="payment-success" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
+        <Route path="momo-mock" element={<ProtectedRoute><MomoMock /></ProtectedRoute>} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path='/blog' element={<Blog/>}/>
         <Route path='blog/:id' element={<BlogDetail/>}/>

@@ -51,7 +51,13 @@ const paymentController = {
                 )
             )
         } catch (error) {
-            next(error)
+            return res.redirect(
+                buildClientPaymentResultUrl(
+                    'failed',
+                    '',
+                    'Xác minh thanh toán VNPay thất bại hoặc chữ ký không hợp lệ.'
+                )
+            )
         }
     },
 
@@ -68,7 +74,13 @@ const paymentController = {
                 )
             )
         } catch (error) {
-            next(error)
+            return res.redirect(
+                buildClientPaymentResultUrl(
+                    'failed',
+                    '',
+                    'Xác minh thanh toán MoMo thất bại hoặc chữ ký không hợp lệ.'
+                )
+            )
         }
     },
 
@@ -78,6 +90,37 @@ const paymentController = {
             res.json({ message: 'OK' })
         } catch (error) {
             next(error)
+        }
+    },
+
+    momoMockReturn: async (req, res, next) => {
+        try {
+            const { orderId, resultCode } = req.query;
+            const order = await Order.findById(orderId);
+            if (!order) throw new Error('Order not found');
+
+            const status = Number(resultCode) === 0 ? 'success' : 'failed';
+            
+            if (status === 'success') {
+                order.paymentStatus = 'paid';
+                order.status = 'paid';
+                order.paymentRef = 'MOCK_' + Date.now();
+            } else {
+                order.paymentStatus = 'failed';
+            }
+            await order.save();
+
+            return res.redirect(
+                buildClientPaymentResultUrl(
+                    status,
+                    order._id.toString(),
+                    status === 'success' ? 'Thanh toán MoMo (MOCK) thành công.' : 'Thanh toán MoMo (MOCK) thất bại.'
+                )
+            );
+        } catch (error) {
+            return res.redirect(
+                buildClientPaymentResultUrl('failed', '', 'Xác minh thanh toán MOCK thất bại.')
+            );
         }
     }
 
