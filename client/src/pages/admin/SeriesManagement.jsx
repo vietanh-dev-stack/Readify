@@ -131,10 +131,10 @@ const SeriesManagement = () => {
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700 }}>Tên chuỗi</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Số tập</TableCell>
+              <TableCell sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>Số tập</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Trạng thái</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Mô tả</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Hành động</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

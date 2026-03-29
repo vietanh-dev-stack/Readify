@@ -553,7 +553,7 @@ const OrderManagement = () => {
                           </Select>
                         </FormControl>
                         <TextField size="small" label="Ghi chú / Tin nhắn" value={trackingMessage} onChange={e => setTrackingMessage(e.target.value)} fullWidth />
-                        <Button variant="contained" disabled={creatingShipment} onClick={handleUpdateShipmentEvent}>Cập nhật</Button>
+                        <Button variant="contained" disabled={creatingShipment} sx={{ minWidth: 140 }} onClick={handleUpdateShipmentEvent}>Cập nhật</Button>
                       </Stack>
                   </Paper>
                 ) : (

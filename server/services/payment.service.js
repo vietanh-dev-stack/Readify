@@ -101,13 +101,11 @@ const paymentService = {
     createMomoPayment: async (order) => {
         const isMock = process.env.MOMO_MOCK === 'true'
 
-        // 👉 MOCK MODE
         if (isMock) {
             const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173'
             return `${clientUrl}/momo-mock?orderId=${order._id}&amount=${order.finalPrice}`
         }
 
-        // 👉 REAL MODE (giữ nguyên code của bạn)
         const {
             MOMO_PARTNER_CODE,
             MOMO_ACCESS_KEY,
