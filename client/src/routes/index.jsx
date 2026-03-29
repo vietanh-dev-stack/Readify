@@ -24,6 +24,7 @@ import SeriesManagement from '../pages/admin/SeriesManagement';
 import BlogManagement from '../pages/admin/BlogManagement';
 import BlogDetail from '../pages/blog/BlogDetail';
 import OrderManagement from '../pages/admin/OrderManagement';
+import BooksPage from '../pages/book/BooksPage';
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="book/:id" element={<Detail />} />
+        <Route path="new-arrivals" element={<BooksPage />} />
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
