@@ -15,6 +15,7 @@ import {
   Stack,
   TextField,
   Typography,
+  Autocomplete,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -22,6 +23,7 @@ import useCartStore from '../../store/useCartStore';
 import { getAddresses, createAddress } from '../../services/address.service';
 import { createOrder } from '../../services/order.service';
 import { createPayment } from '../../services/payment.service';
+import { getProvinces, getDistricts, getWards } from '../../services/province.service';
 
 const initialAddressForm = {
   name: '',
@@ -49,6 +51,16 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState('');
   const [submittingOrder, setSubmittingOrder] = useState(false);
 
+  // Address lookup data
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [lookupLoading, setLookupLoading] = useState({
+    p: false,
+    d: false,
+    w: false
+  });
+
   const loadAddresses = async () => {
     setAddressLoading(true);
     setAddressError('');
@@ -73,9 +85,54 @@ const Checkout = () => {
     }
   };
 
+  const loadProvinces = async () => {
+    setLookupLoading(prev => ({ ...prev, p: true }));
+    try {
+      const res = await getProvinces();
+      setProvinces(res.data);
+    } catch (error) {
+      console.error('Failed to load provinces', error);
+    } finally {
+      setLookupLoading(prev => ({ ...prev, p: false }));
+    }
+  };
+
+  const loadDistricts = async (provinceCode) => {
+    if (!provinceCode) {
+      setDistricts([]);
+      return;
+    }
+    setLookupLoading(prev => ({ ...prev, d: true }));
+    try {
+      const res = await getDistricts(provinceCode);
+      setDistricts(res.data.districts);
+    } catch (error) {
+      console.error('Failed to load districts', error);
+    } finally {
+      setLookupLoading(prev => ({ ...prev, d: false }));
+    }
+  };
+
+  const loadWards = async (districtCode) => {
+    if (!districtCode) {
+      setWards([]);
+      return;
+    }
+    setLookupLoading(prev => ({ ...prev, w: true }));
+    try {
+      const res = await getWards(districtCode);
+      setWards(res.data.wards);
+    } catch (error) {
+      console.error('Failed to load wards', error);
+    } finally {
+      setLookupLoading(prev => ({ ...prev, w: false }));
+    }
+  };
+
   useEffect(() => {
     fetchCart();
     loadAddresses();
+    loadProvinces();
   }, [fetchCart]);
 
   const subtotal = useMemo(() => {
@@ -94,6 +151,42 @@ const Checkout = () => {
     setNewAddress((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleProvinceChange = (event, newValue) => {
+    const provinceName = newValue ? newValue.name : '';
+    setNewAddress(prev => ({
+      ...prev,
+      province: provinceName,
+      district: '',
+      ward: ''
+    }));
+    setDistricts([]);
+    setWards([]);
+    if (newValue) {
+      loadDistricts(newValue.code);
+    }
+  };
+
+  const handleDistrictChange = (event, newValue) => {
+    const districtName = newValue ? newValue.name : '';
+    setNewAddress(prev => ({
+      ...prev,
+      district: districtName,
+      ward: ''
+    }));
+    setWards([]);
+    if (newValue) {
+      loadWards(newValue.code);
+    }
+  };
+
+  const handleWardChange = (event, newValue) => {
+    const wardName = newValue ? newValue.name : '';
+    setNewAddress(prev => ({
+      ...prev,
+      ward: wardName
     }));
   };
 
@@ -324,9 +417,81 @@ const Checkout = () => {
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
                   <TextField label="Họ và tên" name="name" value={newAddress.name} onChange={handleAddressInputChange} fullWidth />
                   <TextField label="Số điện thoại" name="phone" value={newAddress.phone} onChange={handleAddressInputChange} fullWidth />
-                  <TextField label="Tỉnh / Thành phố" name="province" value={newAddress.province} onChange={handleAddressInputChange} fullWidth />
-                  <TextField label="Quận / Huyện" name="district" value={newAddress.district} onChange={handleAddressInputChange} fullWidth />
-                  <TextField label="Phường / Xã" name="ward" value={newAddress.ward} onChange={handleAddressInputChange} fullWidth />
+                  
+                  <Autocomplete
+                    options={provinces}
+                    getOptionLabel={(option) => option.name || ''}
+                    value={provinces.find(p => p.name === newAddress.province) || null}
+                    onChange={handleProvinceChange}
+                    loading={lookupLoading.p}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        label="Tỉnh / Thành phố" 
+                        fullWidth
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {lookupLoading.p ? <CircularProgress color="inherit" size={20} /> : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+
+                  <Autocomplete
+                    options={districts}
+                    getOptionLabel={(option) => option.name || ''}
+                    value={districts.find(d => d.name === newAddress.district) || null}
+                    onChange={handleDistrictChange}
+                    loading={lookupLoading.d}
+                    disabled={!newAddress.province}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        label="Quận / Huyện" 
+                        fullWidth
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {lookupLoading.d ? <CircularProgress color="inherit" size={20} /> : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+
+                  <Autocomplete
+                    options={wards}
+                    getOptionLabel={(option) => option.name || ''}
+                    value={wards.find(w => w.name === newAddress.ward) || null}
+                    onChange={handleWardChange}
+                    loading={lookupLoading.w}
+                    disabled={!newAddress.district}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        label="Phường / Xã" 
+                        fullWidth
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {lookupLoading.w ? <CircularProgress color="inherit" size={20} /> : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+
                   <TextField label="Số nhà, tên đường" name="street" value={newAddress.street} onChange={handleAddressInputChange} fullWidth />
                 </Box>
 

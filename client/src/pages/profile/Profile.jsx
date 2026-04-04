@@ -10,6 +10,8 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { getOrders } from '../../services/order.service';
 import { getShipmentByOrderId } from '../../services/shipment.service';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, CircularProgress } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AddressManager from '../../components/profile/AddressManager';
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -17,20 +19,18 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
 
   const [trackingOpen, setTrackingOpen] = useState(false);
-  const [selectedOrderTracking, setSelectedOrderTracking] = useState(null);
   const [shipmentInfo, setShipmentInfo] = useState(null);
   const [trackingLoading, setTrackingLoading] = useState(false);
 
   const handleOpenTracking = async (orderId) => {
     setTrackingOpen(true);
-    setSelectedOrderTracking(orderId);
     setTrackingLoading(true);
     setShipmentInfo(null);
     try {
       const res = await getShipmentByOrderId(orderId);
       setShipmentInfo(res.data.data);
-    } catch (err) {
-      console.log('No shipment information found');
+    } catch (error) {
+      console.log('No shipment information found', error);
     } finally {
       setTrackingLoading(false);
     }
@@ -38,7 +38,6 @@ const Profile = () => {
 
   const handleCloseTracking = () => {
     setTrackingOpen(false);
-    setSelectedOrderTracking(null);
     setShipmentInfo(null);
   };
 
@@ -112,6 +111,7 @@ const Profile = () => {
             >
               <Tab icon={<PersonIcon sx={{ mr: 2 }} />} iconPosition="start" label="Tổng quan tài khoản" />
               <Tab icon={<ShoppingBagIcon sx={{ mr: 2 }} />} iconPosition="start" label="Lịch sử đơn hàng" />
+              <Tab icon={<LocationOnIcon sx={{ mr: 2 }} />} iconPosition="start" label="Địa chỉ" />
               <Tab icon={<SettingsIcon sx={{ mr: 2 }} />} iconPosition="start" label="Cài đặt" />
             </Tabs>
 
@@ -148,9 +148,8 @@ const Profile = () => {
                   </Box>
                   <Box sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                     <Typography variant="subtitle2" color="text.secondary" gutterBottom>Địa chỉ giao hàng</Typography>
-                    <Typography variant="body1">123 Bookworm Lane</Typography>
-                    <Typography variant="body2" color="text.secondary">Novelty City, NY 10001</Typography>
-                    <Button size="small" sx={{ mt: 2, textTransform: 'none' }}>Quản lý địa chỉ</Button>
+                    <Typography variant="body1">Quản lý các địa chỉ nhận hàng của bạn</Typography>
+                    <Button size="small" sx={{ mt: 2, textTransform: 'none' }} onClick={() => setTabValue(2)}>Quản lý địa chỉ</Button>
                   </Box>
                 </Box>
               </Box>
@@ -194,8 +193,13 @@ const Profile = () => {
               </Box>
             )}
 
-            {/* Tab 2: Settings */}
+            {/* Tab 2: Address Management */}
             {tabValue === 2 && (
+              <AddressManager />
+            )}
+
+            {/* Tab 3: Settings */}
+            {tabValue === 3 && (
               <Box>
                 <Typography variant="h5" fontWeight={700} gutterBottom mb={3}>Cài đặt tài khoản</Typography>
                 <Typography variant="body1" color="text.secondary" mb={2}>
