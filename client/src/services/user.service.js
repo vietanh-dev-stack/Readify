@@ -2,7 +2,11 @@ import axiosCustomize from '../api/axiosCustomize'
 
 
 export const updateProfile = async (data) => {
-    return await axiosCustomize.put('/user/update-profile', data)
+    return await axiosCustomize.put('/user/update-profile', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
 }
 
 export const fetchUsers = async () => {

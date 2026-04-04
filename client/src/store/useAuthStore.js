@@ -25,6 +25,16 @@ const useAuthStore = create(
         accessToken: null, 
         isAuthenticated: false 
       }),
+      updateUser: (updatedData) => {
+        set((state) => ({
+          user: { 
+            ...state.user, 
+            ...updatedData,
+            name: updatedData.username || updatedData.name || state.user.name,
+            avatar: updatedData.avatar || state.user.avatar
+          }
+        }));
+      },
     }),
     {
       name: 'auth-storage',

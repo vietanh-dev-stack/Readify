@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Box, Paper, Avatar, Button, Grid, Tab, Tabs, Divider, List, ListItem, ListItemText, ListItemAvatar } from '@mui/material';
+import { 
+  Typography, Box, Paper, Avatar, Button, Grid, Tab, Tabs, Divider, List, 
+  ListItem, ListItemText, ListItemAvatar, Dialog, DialogTitle, DialogContent, 
+  DialogActions, Stepper, Step, StepLabel, CircularProgress, TextField, 
+  IconButton, Stack 
+} from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -7,16 +12,31 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { getOrders } from '../../services/order.service';
 import { getShipmentByOrderId } from '../../services/shipment.service';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, CircularProgress } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AddressManager from '../../components/profile/AddressManager';
+import { updateProfile } from '../../services/user.service';
+import useAuthStore from '../../store/useAuthStore';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const updateUser = useAuthStore(state => state.updateUser);
   const [tabValue, setTabValue] = useState(0);
   const [orders, setOrders] = useState([]);
+
+  // Edit profile state
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [profileData, setProfileData] = useState({
+    username: user?.username || user?.name || '',
+    phone: user?.phone || '',
+    avatar: user?.avatar || ''
+  });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');
+  const [updatingProfile, setUpdatingProfile] = useState(false);
 
   const [trackingOpen, setTrackingOpen] = useState(false);
   const [shipmentInfo, setShipmentInfo] = useState(null);
@@ -41,6 +61,53 @@ const Profile = () => {
     setShipmentInfo(null);
   };
 
+  const handleOpenEditProfile = () => {
+    setProfileData({
+      username: user?.username || user?.name || '',
+      phone: user?.phone || '',
+      avatar: user?.avatar || ''
+    });
+    setAvatarPreview(user?.avatar || '');
+    setAvatarFile(null);
+    setEditProfileOpen(true);
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setUpdatingProfile(true);
+    try {
+      const formData = new FormData();
+      formData.append('username', profileData.username);
+      formData.append('phone', profileData.phone);
+      if (avatarFile) {
+        formData.append('image', avatarFile);
+      }
+
+      const res = await updateProfile(formData);
+      const updatedUser = res.data;
+      updateUser(updatedUser);
+      toast.success('Cập nhật thông tin thành công!');
+      setEditProfileOpen(false);
+    } catch (err) {
+      console.error(err);
+      const message = err.response?.data?.message || 'Cập nhật thông tin thất bại!';
+      toast.error(message);
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -50,7 +117,7 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         const orderResponse = await getOrders()
-        setOrders(orderResponse.data.data)
+        setOrders(orderResponse?.data?.data || [])
       } catch (error) {
         console.log(error);
       }
@@ -91,7 +158,7 @@ const Profile = () => {
                   fontWeight: 700
                 }}
               >
-                {!user?.avatar && (user?.name ? user.name[0].toUpperCase() : 'U')}
+                {!user?.avatar && (user?.username?.[0] || user?.name?.[0] || 'U').toUpperCase()}
               </Avatar>
               <Typography variant="h6" fontWeight={700}>{user.name}</Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>{user.email}</Typography>
@@ -144,7 +211,7 @@ const Profile = () => {
                     <Typography variant="subtitle2" color="text.secondary" gutterBottom>Thông tin cá nhân</Typography>
                     <Typography variant="body1" fontWeight={600}>{user.name}</Typography>
                     <Typography variant="body2" color="text.secondary">{user.email}</Typography>
-                    <Button size="small" sx={{ mt: 2, textTransform: 'none' }}>Chỉnh sửa</Button>
+                    <Button size="small" sx={{ mt: 2, textTransform: 'none' }} onClick={handleOpenEditProfile}>Chỉnh sửa</Button>
                   </Box>
                   <Box sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                     <Typography variant="subtitle2" color="text.secondary" gutterBottom>Địa chỉ giao hàng</Typography>
@@ -160,35 +227,43 @@ const Profile = () => {
               <Box>
                 <Typography variant="h5" fontWeight={700} gutterBottom mb={3}>Lịch sử đơn hàng</Typography>
                 <List sx={{ width: '100%' }}>
-                  {orders.map((order, index) => (
-                    <React.Fragment key={order._id}>
-                      <ListItem alignItems="flex-start" sx={{ px: 0, py: 2 }}>
-                        <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: 'grey.100', color: 'primary.main' }}>
-                            <StorefrontIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                                <Typography variant="subtitle1" fontWeight={700}>{order._id}</Typography>
-                              <Typography variant="subtitle1" fontWeight={700}>{order.finalPrice.toLocaleString('vi-VN') + ' đ'}</Typography>
-                            </Box>
-                          }
-                          secondary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="body2" color="text.secondary">Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}</Typography>
-                              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                                <Typography variant="body2" color="success.main" fontWeight={600}>{order.status}</Typography>
-                                <Button size="small" variant="outlined" startIcon={<LocalShippingIcon />} onClick={() => handleOpenTracking(order._id)}>Theo dõi</Button>
+                  {orders && orders.length > 0 ? (
+                    orders.map((order, index) => (
+                      <React.Fragment key={order?._id || index}>
+                        <ListItem alignItems="flex-start" sx={{ px: 0, py: 2 }}>
+                          <ListItemAvatar>
+                            <Avatar sx={{ bgcolor: 'grey.100', color: 'primary.main' }}>
+                              <StorefrontIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                                <Typography variant="subtitle1" fontWeight={700}>{order?._id}</Typography>
+                                <Typography variant="subtitle1" fontWeight={700}>{(order?.finalPrice || 0).toLocaleString('vi-VN') + ' đ'}</Typography>
                               </Box>
-                            </Box>
-                          }
-                        />
-                      </ListItem>
-                      {index < orders.length - 1 && <Divider component="li" />}
-                    </React.Fragment>
-                  ))}
+                            }
+                            secondary={
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Typography variant="body2" color="text.secondary">
+                                  Đặt ngày {order?.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                  <Typography variant="body2" color="success.main" fontWeight={600}>{order?.status}</Typography>
+                                  <Button size="small" variant="outlined" startIcon={<LocalShippingIcon />} onClick={() => handleOpenTracking(order._id)}>
+                                    Theo dõi
+                                  </Button>
+                                </Box>
+                              </Box>
+                            }
+                          />
+                        </ListItem>
+                        {index < orders.length - 1 && <Divider component="li" />}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <Typography color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>Chưa có đơn hàng nào.</Typography>
+                  )}
                 </List>
               </Box>
             )}
@@ -258,6 +333,75 @@ const Profile = () => {
         <DialogActions>
           <Button onClick={handleCloseTracking}>Đóng</Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={editProfileOpen} onClose={() => setEditProfileOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle sx={{ fontWeight: 700 }}>Chỉnh sửa thông tin cá nhân</DialogTitle>
+        <form onSubmit={handleProfileSubmit}>
+          <DialogContent dividers>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ position: 'relative' }}>
+                <Avatar 
+                  src={avatarPreview} 
+                  sx={{ width: 100, height: 100, border: '4px solid white', boxShadow: 1 }}
+                />
+                <IconButton 
+                  component="label" 
+                  sx={{ 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    right: 0, 
+                    bgcolor: 'primary.main', 
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }}
+                  size="small"
+                >
+                  <PhotoCameraIcon fontSize="small" />
+                  <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
+                </IconButton>
+              </Box>
+              <Typography variant="caption" sx={{ mt: 1, color: 'text.secondary' }}>
+                Dung lượng tối đa 1MB, định dạng: .JPG, .PNG
+              </Typography>
+            </Box>
+
+            <Stack spacing={3}>
+              <TextField 
+                label="Tên đăng nhập" 
+                fullWidth 
+                required 
+                value={profileData.username}
+                onChange={(e) => setProfileData(p => ({ ...p, username: e.target.value }))}
+              />
+              <TextField 
+                label="Số điện thoại" 
+                fullWidth 
+                value={profileData.phone}
+                onChange={(e) => setProfileData(p => ({ ...p, phone: e.target.value }))}
+              />
+              <TextField 
+                label="Email" 
+                fullWidth 
+                disabled 
+                value={user?.email}
+                helperText="Không thể thay đổi địa chỉ email."
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ p: 2, px: 3 }}>
+            <Button onClick={() => setEditProfileOpen(false)} color="inherit">Hủy</Button>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              disabled={updatingProfile}
+              sx={{ px: 4 }}
+            >
+              {updatingProfile ? <CircularProgress size={24} color="inherit" /> : 'Lưu thay đổi'}
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </Box>
   );
