@@ -20,8 +20,8 @@ import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 
-import BookCard from '../../components/book/BookCard';
-import FilterSidebar from '../../components/book/FilterSidebar';
+import BookCard from '../../components/common/BookCard';
+import FilterSidebar from '../../components/common/FilterSidebar';
 import {
   mockBooks,
   priceBounds,
